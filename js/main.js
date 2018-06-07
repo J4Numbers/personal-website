@@ -1,4 +1,4 @@
-/*!
+/*
  * MIT License
  *
  * Copyright (c) 2018 J4Numbers
@@ -22,15 +22,26 @@
  * SOFTWARE.
  */
 
-.splash-page {
-  background-color: #16661a;
-  padding-top: 25vh;
+function iPromise() {
+    return new Promise(resolve => {
+        setTimeout(() => resolve(), 5000);
+    });
 }
 
-.about-page {
-  background-color: #3d3d3d;
-}
+const toTheTop = () => {
+    $("html, body").animate({scrollTop: 0}, "slow");
+};
 
-.blog-page {
-  background-color: #5ea9dd;
-}
+const goto = (id) => {
+    $("html, body").animate(
+        {
+            scrollTop: $(id).offset().top
+        }, "slow");
+};
+
+const toggleMenu = () => {
+    document.getElementById("showLeftPush").classList.toggle("active");
+    document.getElementById("showLeftPush").classList.toggle("cbp-spmenu-button-push-toleft");
+    document.body.classList.toggle("cbp-spmenu-push-toleft");
+    document.getElementById("cbp-spmenu-s1").classList.toggle("cbp-spmenu-open");
+};
