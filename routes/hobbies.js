@@ -25,6 +25,8 @@
 const express = require("express");
 const router = express.Router();
 
+const anime = require("./hobbies_anime");
+
 router.get("/", function (req, res, next) {
     res.render("./pages/hobbies_all", {
         top_page: {
@@ -41,5 +43,7 @@ router.get("/", function (req, res, next) {
         }
     });
 });
+
+router.use("/anime", [anime]);
 
 module.exports = router;
