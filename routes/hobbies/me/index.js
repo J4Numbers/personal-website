@@ -23,7 +23,7 @@
  */
 
 const router = require('express').Router();
-const { testFriendLoggedIn } = require('../../../journey/friend_login');
+const testFriendLoggedIn = require('../../../journey/misc/test_friend_logged_in');
 
 router.use('/', require('./me_auth'));
 router.use(testFriendLoggedIn);

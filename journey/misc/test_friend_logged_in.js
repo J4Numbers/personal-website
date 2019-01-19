@@ -22,10 +22,19 @@
  * SOFTWARE.
  */
 
-const router = require('express').Router();
+const CacheFactory = require('../../lib/CacheFactory');
 
-/* GET home page. */
-router.get('/login', require('../../../journey/misc/friend_login_view'));
-router.post('/login', require('../../../journey/misc/friend_login_compare'));
+const testFriendLoggedIn = async (req, res, next) => {
+    if (!req.signedCookies.SSID) {
+        res.redirect(303, '/hobbies/me/login');
+    } else {
+        const cache = CacheFactory();
+        if ((await cache.get(req.signedCookies.SSID)).trust_level < 2) {
+            res.redirect(303, '/hobbies/me/login');
+        } else {
+            next();
+        }
+    }
+};
 
-module.exports = router;
+module.exports = testFriendLoggedIn;
