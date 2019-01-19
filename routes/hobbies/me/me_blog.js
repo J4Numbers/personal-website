@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 J4Numbers
+ * Copyright (c) 2019 J4Numbers
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,8 @@
 const express = require('express');
 const router = express.Router();
 const markdown = require('markdown-it')();
-const SiteError = require('../../lib/SiteError');
-const BlogHandler = require('../../lib/BlogHandler');
+const SiteError = require('../../../lib/SiteError');
+const BlogHandler = require('../../../lib/BlogHandler');
 const blogHandlerInstance = BlogHandler.getHandler();
 
 /* GET all blog posts */

@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 J4Numbers
+ * Copyright (c) 2019 J4Numbers
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,14 +22,22 @@
  * SOFTWARE.
  */
 
-const express = require('express');
+const generateHomepage = (req, res) => {
+    res.render('./pages/hobbies_all', {
+        top_page: {
+            title: 'My Hobbies',
+            tagline: 'I have several hobbies and interests... Some of them are somewhat worrying',
+            image_src: '/images/handle_logo.png',
+            image_alt: 'Main face of the site'
+        },
 
-const { friendLoginView, friendLoginCompare } = require('../../journey/friend_login');
+        head: {
+            title: 'J4Numbers :: Hobbies',
+            description: 'Home to the wild things',
+            current_page: 'hobbies',
+            current_sub_page: 'index'
+        }
+    });
+};
 
-const router = express.Router();
-
-/* GET home page. */
-router.get('/login', friendLoginView);
-router.post('/login', friendLoginCompare);
-
-module.exports = router;
+module.exports = generateHomepage;
