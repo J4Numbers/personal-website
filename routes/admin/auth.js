@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2018 J4Numbers
+ * Copyright (c) 2019 J4Numbers
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
 const router = require('express').Router();
 
 /* GET home page. */
-router.get('/admin/login', require('../journey/misc/admin_login_view'));
-router.post('/admin/login', require('../journey/misc/admin_login_compare'));
+router.get('/', require('../../journey/misc/admin_login_view'));
+router.post('/', require('../../journey/misc/admin_login_compare'));
 
 module.exports = router;
