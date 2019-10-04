@@ -22,9 +22,8 @@
  * SOFTWARE.
  */
 
-const router = require('express').Router();
+const homepageJourney = require('../journey/base/homepage');
 
-/* GET home page. */
-router.get('/', require('../journey/base/homepage'));
-
-module.exports = router;
+module.exports = (server) => {
+    server.get('/', homepageJourney);
+};
