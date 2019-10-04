@@ -22,12 +22,41 @@
  * SOFTWARE.
  */
 
-const testAdministratorLoggedIn = async (req, res, next) => {
-    if (!res.nunjucks['logged_in']) {
-        res.redirect(303, '/admin/login', next);
-    } else {
-        next();
-    }
+const fs = require('fs');
+const config = require('config');
+const jwt = require('jsonwebtoken');
+
+const certificateFile = fs.readFileSync(config.get('jwt.public_cert'));
+const keyFile = fs.readFileSync(config.get('jwt.private_key'));
+
+const decodeToken = async (token) => {
+  try {
+    return jwt.verify(token, certificateFile)
+  } catch (e) {
+    return {};
+  }
 };
 
-module.exports = testAdministratorLoggedIn;
+const generateSignature = async (payload) =>
+    jwt.sign(payload, keyFile, {
+      algorithm: 'RS256',
+      expiresIn: '60m',
+      issuer: 'J4Numbers',
+    });
+
+const isLoggedIn = async (token) => {
+  if (token === '') {
+    return false;
+  }
+  const decoded = await decodeToken(token);
+  if (!Object.prototype.hasOwnProperty.call(decoded, 'admin')) {
+    return false;
+  }
+  return decoded.admin;
+};
+
+module.exports = {
+  generateSignature,
+  isLoggedIn,
+  decodeToken
+};

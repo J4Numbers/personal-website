@@ -22,10 +22,10 @@
  * SOFTWARE.
  */
 
-const router = require('express').Router();
+const viewAdminLogin = require('../../journey/misc/admin_login_view');
+const postAdminLogin = require('../../journey/misc/admin_login_compare');
 
-/* GET home page. */
-router.get('/', require('../../journey/misc/admin_login_view'));
-router.post('/', require('../../journey/misc/admin_login_compare'));
-
-module.exports = router;
+module.exports = (server) => {
+    server.get('/admin/login', viewAdminLogin);
+    server.post('/admin/login', postAdminLogin);
+};
