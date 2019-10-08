@@ -22,19 +22,23 @@
  * SOFTWARE.
  */
 
-const CacheFactory = require('../../lib/CacheFactory');
+const config = require('config');
 
-const getIsAdmin = async (ssid) => {
-    if (typeof ssid === 'undefined') {
-        return false;
+const over18Check = (req, res, next) => {
+    if (req.body['over_18'] === 'yes') {
+        res.header(
+            'Set-Cookie',
+            `over-18=yes; `
+            + `Max-Age=3600; `
+            + `Domain=${config.get('app.hostname')}; `
+            + `Secure; `
+            + `HttpOnly; `
+            + `SameSite=Strict`
+        );
+        res.redirect(303, '/hobbies/me/fetishes', next);
     } else {
-        let cache = CacheFactory();
-        const session = await cache.get(ssid);
-        console.log(session);
-        return (session !== null)
-            && (typeof session.trust_level !== 'undefined')
-            && (session.trust_level > 1);
+        res.redirect(303, '/hobbies/me/over-18', next);
     }
 };
 
-module.exports = getIsAdmin;
+module.exports = over18Check;

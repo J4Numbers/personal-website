@@ -1,6 +1,7 @@
 /*
  * MIT License
  *
+ * Copyright (c) 2019 J4Numbers
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,19 +22,12 @@
  * SOFTWARE.
  */
 
-const CacheFactory = require('../../lib/CacheFactory');
-
-const getIsFriend = async (ssid) => {
-    if (typeof ssid === 'undefined') {
-        return false;
-    } else {
-        let cache = CacheFactory();
-        const session = await cache.get(ssid);
-        return (session !== null)
-            && (typeof session.trust_level !== 'undefined')
-            && (session.trust_level > 0);
-    }
+const cookiesConverter = (req, res, next) => {
+  res.cookies = typeof res.cookies === 'undefined' ? {} : res.cookies;
+  const regex = /over-18=([^ ;]*)/i;
+  const tokenHeader = regex.exec(req.header('cookie'));
+  res.cookies['over-18'] = tokenHeader === null ? '' : tokenHeader[1];
+  next();
 };
 
-module.exports = getIsFriend;
-
+module.exports = cookiesConverter;
