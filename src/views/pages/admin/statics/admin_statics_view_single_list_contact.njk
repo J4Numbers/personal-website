@@ -6,9 +6,9 @@
         <h3 class="mb-4">{{ content.static_id | replace("_", " ") | capitalize }}</h3>
         <div class="mb-4">
             {% for contact in content.static_detail %}
-                <div class="mb-4">
+                <div class="mb-4 container bg-light-darker p-2">
                     <h4>{{ contact.contact_method }}</h4>
-                    <p>Icon: {{ contact.fa_style }}:{{ contact.fa_icon }}</p>
+                    <p>Icon: <svg class="bi" height="1em" width="1em"><use xlink:href="/assets/images/bootstrap-icons.svg#{{ contact.bs_icon }}" /></svg> - {{ contact.bs_icon }}</p>
                     <p>Link: {{ contact.contact_link }}</p>
                 </div>
             {% endfor %}

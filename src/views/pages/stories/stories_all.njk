@@ -20,9 +20,9 @@
                         <img class="small_cover img-thumbnail" src="data:image/png;base64,{{ story.cover_img }}" alt="{{ story.title }}" />
                     {% else %}
                         <div class="img-thumbnail mx-auto text-dark icon-host row">
-                            <div class="my-auto mx-auto">
-                                <i class="fas fa-book fa-7x"></i>
-                            </div>
+                            <svg class="bi mx-auto my-auto" width="7em" height="7em" fill="#212529">
+                                <use xlink:href="/assets/images/bootstrap-icons.svg#journal-text" />
+                            </svg>
                         </div>
                     {% endif %}
                     <h2 class="art_title">{{ story.title }}</h2>

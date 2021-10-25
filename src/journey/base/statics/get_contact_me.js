@@ -37,8 +37,7 @@ const getContactMe = async (req, res, next) => {
         title:   'Contact Me',
         tagline: 'If, for whatever reason, you want to get in touch with me, '
           + 'use the links below to find my other hidey-holes.',
-        fa_type:   'fas',
-        fa_choice: 'fa-phone',
+        bs_icon: 'telephone-fill',
       },
 
       content: {

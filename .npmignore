@@ -1,0 +1,11 @@
+.idea
+.nyc_output
+coverage
+data
+test
+
+*eslint*
+.dockerignore
+docker-compose.yml
+*Dockerfile
+nyc*
