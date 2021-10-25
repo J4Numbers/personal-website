@@ -3,7 +3,7 @@
 {% import "macros/content.njk" as c %}
 
 {% block banner_icon %}
-    {{ c.fa_banner(top_page.fa_type, top_page.fa_choice) }}
+    {{ c.bs_banner(top_page.bs_icon) }}
 {% endblock %}
 
 {% block content %}
@@ -15,7 +15,7 @@
             {% endif %}
 
             <div class="col-lg-4">
-                {{ c.contact_option(option.contact_method, option.fa_style, option.fa_icon, option.contact_link) }}
+                {{ c.contact_option(option.contact_method, option.bs_icon, option.contact_link) }}
             </div>
 
             {% if ((loop.index0 % 3) == 2) or (loop.last) %}

@@ -6,7 +6,7 @@
     {% if content.story.cover_img | length %}
         {{ c.cover_banner(top_page.image_src, top_page.image_alt) }}
     {% else %}
-        {{ c.fa_banner("fas", "fa-book") }}
+        {{ c.bs_banner("journal-text") }}
     {% endif %}
 {% endblock %}
 

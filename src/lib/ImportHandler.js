@@ -43,7 +43,7 @@ async function resolveInsertNewAnime (newAnimetoInsert) {
     newAnimetoInsert.media.status,
     newAnimetoInsert.media.description,
     newAnimetoInsert.media.coverImage,
-    crypto.createHash('sha256').update(JSON.stringify(newAnimetoInsert)).digest('hex')
+    crypto.createHash('sha256').update(JSON.stringify(newAnimetoInsert)).digest('hex'),
   );
 }
 
@@ -63,7 +63,7 @@ async function resolveOverwriteExistingAnime (oldId, oldAnimeToOverwrite) {
     oldAnimeToOverwrite.media.status,
     oldAnimeToOverwrite.media.description,
     oldAnimeToOverwrite.media.coverImage,
-    crypto.createHash('sha256').update(JSON.stringify(oldAnimeToOverwrite)).digest('hex')
+    crypto.createHash('sha256').update(JSON.stringify(oldAnimeToOverwrite)).digest('hex'),
   );
 }
 
@@ -87,7 +87,7 @@ async function resolveInsertNewManga (newMangatoInsert) {
     newMangatoInsert.media.status,
     newMangatoInsert.media.description,
     newMangatoInsert.media.coverImage,
-    crypto.createHash('sha256').update(JSON.stringify(newMangatoInsert)).digest('hex')
+    crypto.createHash('sha256').update(JSON.stringify(newMangatoInsert)).digest('hex'),
   );
 }
 
@@ -110,7 +110,7 @@ async function resolveOverwriteExistingManga (oldId, newMangatoInsert) {
     newMangatoInsert.media.status,
     newMangatoInsert.media.description,
     newMangatoInsert.media.coverImage,
-    crypto.createHash('sha256').update(JSON.stringify(newMangatoInsert)).digest('hex')
+    crypto.createHash('sha256').update(JSON.stringify(newMangatoInsert)).digest('hex'),
   );
 }
 

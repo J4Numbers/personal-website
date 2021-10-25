@@ -25,7 +25,6 @@ const renderer = require('../../../lib/renderer').nunjucksRenderer();
 const animeHandler = require('../../../lib/AnimeHandler').getHandler();
 const artHandler = require('../../../lib/ArtHandler').getHandler();
 const blogHandler = require('../../../lib/BlogHandler').getHandler();
-const kinkHandler = require('../../../lib/KinkHandler').getHandler();
 const mangaHandler = require('../../../lib/MangaHandler').getHandler();
 const storyHandler = require('../../../lib/StoryHandler').getHandler();
 
@@ -35,8 +34,7 @@ const doSearch = async (req, res, next) => {
     top_page: {
       title:     'Search',
       tagline:   'Search through all the items that are on offer',
-      fa_type:   'fas',
-      fa_choice: 'fa-search',
+      bs_icon:   'search',
     },
 
     pagination: {
@@ -55,7 +53,6 @@ const doSearch = async (req, res, next) => {
     translators: {
       anilist: (item) => item.title.romaji,
       blogs:   (item) => item.long_title,
-      kinks:   (item) => item.kink_name,
       title:   (item) => item.title,
     },
 
@@ -95,14 +92,6 @@ const doSearch = async (req, res, next) => {
           },
         } ],
       }, 0, 10, { 'long_title': -1 }),
-      kinkHandler.findKinksByQuery({
-        $or: [ query, {
-          'kink_name': {
-            $regex:   renderVars.search,
-            $options: 'i',
-          },
-        } ],
-      }, 0, 10, { 'kink_name': -1 }),
       mangaHandler.findMangaBooksByQuery({
         $or: [ query, {
           'title.romaji': {
@@ -120,15 +109,14 @@ const doSearch = async (req, res, next) => {
         } ],
       }, 0, 10, { 'title': -1 }),
     ])
-      .then(async ([ animeItems, artItems, blogItems, kinkItems, mangaItems, storyItems ]) => {
+      .then(async ([ animeItems, artItems, blogItems, mangaItems, storyItems ]) => {
         if (!res.nunjucks.friendly) {
           req.log.debug('Not signed in... filtering unprotected items');
           blogItems = blogItems.filter((item) => item.public);
-          kinkItems = undefined;
         }
-        return [ animeItems, artItems, blogItems, kinkItems, mangaItems, storyItems ];
+        return [ animeItems, artItems, blogItems, mangaItems, storyItems ];
       })
-      .then(([ animeItems, artItems, blogItems, kinkItems, mangaItems, storyItems ]) => {
+      .then(([ animeItems, artItems, blogItems, mangaItems, storyItems ]) => {
         renderVars.content = {
           'anime':   animeItems,
           'art':     artItems,
@@ -136,9 +124,6 @@ const doSearch = async (req, res, next) => {
           'manga':   mangaItems,
           'stories': storyItems,
         };
-        if (typeof kinkItems !== 'undefined') {
-          renderVars.content.kinks = kinkItems;
-        }
         return Promise.resolve();
       })
       .then(() => {

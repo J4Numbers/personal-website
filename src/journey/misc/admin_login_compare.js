@@ -36,7 +36,7 @@ const adminLoginCompare = async (req, res, next) => {
           + `Domain=${config.get('app.hostname')}; `
           + 'Secure; '
           + 'HttpOnly; '
-          + 'SameSite=Strict'
+          + 'SameSite=Strict',
       );
     }
   }

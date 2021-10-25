@@ -39,8 +39,7 @@ const viewDeleteSingleChapter = async (req, res, next) => {
       top_page: {
         title:     'Administrator Toolkit',
         tagline:   'All the functions that the administrator of the site has available to them',
-        fa_type:   'fas',
-        fa_choice: 'fa-toolbox',
+        bs_icon:   'tools',
       },
 
       content: {

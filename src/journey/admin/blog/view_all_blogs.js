@@ -33,7 +33,7 @@ const viewBlogHome = async (req, res, next) => {
       Math.max(0, ((req.query.page || 1) - 1)) * 10,
       10,
       { 'time_posted': -1 },
-      false
+      false,
     );
     const totalCount = await blogHandlerInstance.getTotalBlogCount(false);
     res.contentType = 'text/html';
@@ -42,8 +42,7 @@ const viewBlogHome = async (req, res, next) => {
       top_page: {
         title:     'Administrator Toolkit',
         tagline:   'All the functions that the administrator of the site has available to them',
-        fa_type:   'fas',
-        fa_choice: 'fa-toolbox',
+        bs_icon:   'tools',
       },
 
       content: {

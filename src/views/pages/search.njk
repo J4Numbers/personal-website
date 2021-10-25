@@ -2,7 +2,7 @@
 {% import "macros/content.njk" as c %}
 
 {% block banner_icon %}
-    {{ c.fa_banner(top_page.fa_type, top_page.fa_choice) }}
+    {{ c.bs_banner(top_page.bs_icon) }}
 {% endblock %}
 
 {% block content %}
@@ -21,7 +21,6 @@
                     <li>Anime shows: {{ content.anime | length }}</li>
                     <li>Art pieces: {{ content.art | length }}</li>
                     <li>Blog posts: {{ content.blogs | length }}</li>
-                    {% if content.kinks %}<li>Kinks: {{ content.kinks | length }}</li>{% endif %}
                     <li>Manga series: {{ content.manga | length }}</li>
                     <li>Stories: {{ content.stories | length }}</li>
                 </ul>
@@ -31,7 +30,6 @@
                 {{ c.search_contents("Art pieces", "/hobbies/art", content.art, translators.title) }}
                 {{ c.search_contents("Anime", "/hobbies/anime", content.anime, translators.anilist) }}
                 {{ c.search_contents("Blog posts", "/blog", content.blogs, translators.blogs) }}
-                {% if content.kinks %}{{ c.search_contents("Kinks", "/hobbies/me/fetishes", content.kinks, translators.kinks) }}{% endif %}
                 {{ c.search_contents("Manga", "/hobbies/manga", content.manga, translators.anilist) }}
                 {{ c.search_contents("Stories", "/hobbies/writing", content.stories, translators.title) }}
             </div>
