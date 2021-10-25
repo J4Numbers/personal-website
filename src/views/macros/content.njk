@@ -23,7 +23,8 @@
 {% endmacro %}
 
 {% macro cover_banner(img_location, img_alt) %}
-    <img src="{{ img_location }}" class="img-thumbnail icon-host-width" />
+    <img src="{{ img_location }}" class="img-thumbnail icon-host-width"
+         alt="{{ img_alt }}" />
 {% endmacro %}
 
 {% macro search_contents(search_name, search_url_base, search_items, search_title) %}

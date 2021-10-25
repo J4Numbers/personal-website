@@ -1,5 +1,7 @@
+const baseConfig = require('@j4numbers/eslint-base-config');
+
 module.exports = {
-  ...require('@j4numbers/eslint-base-config'),
+  ...baseConfig,
 
   env: {
     'es6': true,

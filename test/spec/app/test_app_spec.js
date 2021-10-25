@@ -20,24 +20,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const configuration = require('../../../config/test');
-
 describe('The central application', function () {
   describe('default routes', function () {
-    before(function () {
-      process.env.ALLOW_CONFIG_MUTATIONS = 'true';
-      process.env.NODE_CONFIG = JSON.stringify(configuration);
-    });
-
     after(function () {
-      clearRequire('config');
+      stopMockRequire('config');
     });
 
-    it('should load the home page', () => request(require('../../../src/app'))
-      .get('/')
-      .then((response) => {
-        expect(response).to.have.status(200);
-        expect(response).to.have.header('content-type', /text\/html/u);
-      }));
+    it('should load the home page', function () {
+      request(server())
+        .get('/')
+        .then((response) => {
+          expect(response).to.have.status(200);
+          expect(response).to.be.html;
+        });
+    });
+
+    it('Should return a 404 if the page does not exist', function () {
+      return request(server())
+        .get('/this-page-does-not-exist')
+        .then((response) => {
+          expect(response).to.have.status(404);
+          expect(response).to.be.html;
+        });
+    });
   });
 });

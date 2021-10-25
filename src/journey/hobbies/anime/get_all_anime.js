@@ -31,7 +31,7 @@ const getAllAnime = async (req, res, next) => {
       Math.max(0, ((req.query.page || 1) - 1)) * 12,
       12,
       { 'title.romaji': 1 },
-      req.query.category
+      req.query.category,
     );
     const allShowCount = await animeHandlerInstance.getTotalShowCount(req.query.category || '');
 

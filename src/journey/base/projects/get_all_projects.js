@@ -31,7 +31,7 @@ const getAllProjects = async (req, res, next) => {
     const allProjects = await projectHandlerInstance.findProjects(
       Math.max(0, ((req.query.page || 1) - 1)) * 10,
       10,
-      { 'time_posted': -1 }
+      { 'time_posted': -1 },
     );
     const allProjectCounts = await projectHandlerInstance.getTotalProjectCount();
 
