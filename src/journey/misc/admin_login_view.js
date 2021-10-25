@@ -34,8 +34,7 @@ const adminLoginView = async (req, res, next) => {
       top_page: {
         title:     'Log in',
         tagline:   'Log into the site as an administrator',
-        fa_type:   'fas',
-        fa_choice: 'fa-key',
+        bs_icon:   'key-fill',
       },
 
       head: {

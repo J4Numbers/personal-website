@@ -1,11 +1,11 @@
-<div class="jumbotron bg-dark-lighter lift-dark-shadow no-gutters text-light">
+<div class="p-5 mb-4 bg-dark-lighter lift-dark-shadow no-gutters text-light">
     <div class="container row">
         <div class="offset-md-1 col-md-4">
             {% block banner_icon %}
                 <div class="img-thumbnail rounded-circle icon-host mx-auto row text-dark">
-                    <div class="mx-auto my-auto">
-                        <i class="{{ top_page.fa_type }} {{ top_page.fa_choice }} fa-7x"></i>
-                    </div>
+                    <svg class="bi mx-auto my-auto" width="7em" height="7em" fill="#212529">
+                        <use xlink:href="/assets/images/bootstrap-icons.svg#{{ top_page.bs_icon }}" />
+                    </svg>
                 </div>
             {% endblock %}
         </div>

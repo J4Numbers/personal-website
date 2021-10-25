@@ -69,6 +69,7 @@ gulp.task('copy-scripts', () => gulp
 gulp.task('copy-images', () => gulp
   .src([
     './src/images/**/*.{png,ico,gif,jpg,svg}',
+    './node_modules/bootstrap-icons/*.svg',
   ])
   .pipe(gulp.dest('./public/images')));
 

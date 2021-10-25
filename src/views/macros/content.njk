@@ -1,19 +1,19 @@
-{% macro contact_option(name, icon_type, icon_name, locator) %}
+{% macro contact_option(name, bs_icon, locator) %}
     <a href="{{ locator }}" class="hidden-light-link">
         <div class="rounded-circle mx-auto img-thumbnail icon-host row bg-dark-darker">
-            <div class="mx-auto my-auto">
-                <i class="{{ icon_type }} {{ icon_name }} fa-7x"></i>
-            </div>
+            <svg class="bi mx-auto my-auto" width="7em" height="7em" fill="#dee2e6">
+                <use xlink:href="/assets/images/bootstrap-icons.svg#{{ bs_icon }}" />
+            </svg>
         </div>
     </a>
     <h3 class="text-center">{{ name }}</h3>
 {% endmacro %}
 
-{% macro fa_banner(fa_type, fa_choice) %}
+{% macro bs_banner(bs_icon) %}
     <div class="img-thumbnail rounded-circle icon-host mx-auto row text-dark">
-        <div class="mx-auto my-auto">
-            <i class="{{ fa_type }} {{ fa_choice }} fa-7x"></i>
-        </div>
+        <svg class="bi mx-auto my-auto" width="7em" height="7em" fill="#212529">
+            <use xlink:href="/assets/images/bootstrap-icons.svg#{{ bs_icon }}" />
+        </svg>
     </div>
 {% endmacro %}
 

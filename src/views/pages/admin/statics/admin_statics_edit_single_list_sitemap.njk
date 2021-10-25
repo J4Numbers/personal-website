@@ -7,7 +7,7 @@
         <form method="post" enctype="application/json" action="">
             <div class="map-entries" id="sitemap-collection">
                 {% for map in content.static_detail %}
-                    <div class="static-item mb4">
+                    <div class="static-item mb-4 container bg-light-darker p-2">
                         <label for="sitemap-page-name-{{ loop.index0 }}">Page name</label>
                         <input class="form-control" id="sitemap-page-name-{{ loop.index0 }}" name="sitemap-page[{{ loop.index0 }}][page_name]" value="{{ map.page_name }}" />
                         <label for="sitemap-page-link-{{ loop.index0 }}">Page link</label>

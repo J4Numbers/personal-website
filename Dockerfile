@@ -13,7 +13,6 @@ RUN npm i --only=production
 # Stage 3 - package files
 FROM node:12-alpine AS package
 WORKDIR /opt/web/app
-COPY --from=compile         /opt/web/app/bin                                        ./bin
 COPY --from=compile         /opt/web/app/config/default.js                          ./config/
 COPY --from=compile         /opt/web/app/config/custom-environment-variables.json   ./config/
 COPY --from=compile         /opt/web/app/src                                        ./src

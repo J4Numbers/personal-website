@@ -1,7 +1,7 @@
 version: '3'
 services:
   mongodb:
-    image: mongo
+    image: mongo:5.0
     command: mongod
     ports:
       - "27017:27017"
@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile
       context: ./
     volumes:
-      - "./test/spec/helpers/certs:/etc/ssl/"
+      - "./certs:/etc/ssl/"
     environment:
       APP_NAME: "j4numbers"
       APP_HOSTNAME: "localhost"

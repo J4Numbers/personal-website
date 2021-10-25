@@ -32,8 +32,7 @@ const friendLoginView = async (req, res, next) => {
       top_page: {
         title:     'Test Your Knowledge',
         tagline:   'Log into the site as someone who knows me',
-        fa_type:   'fas',
-        fa_choice: 'fa-key',
+        bs_icon:   'key-fill',
       },
 
       head: {
