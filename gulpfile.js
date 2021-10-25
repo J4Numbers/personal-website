@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const npath = require('path');
-const sass = require('gulp-sass');
+const sassCompiler = require('sass');
+const sass = require('gulp-sass')(sassCompiler);
 const babel = require('gulp-babel');
 const clean = require('gulp-clean');
 
