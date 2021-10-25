@@ -30,7 +30,7 @@ const getAllBlogs = async (req, res, next) => {
     const blogPosts = await blogHandlerInstance.findBlogs(
       Math.max(0, ((req.query.page || 1) - 1)) * 10,
       10,
-      { 'time_posted': -1 }
+      { 'time_posted': -1 },
     );
     const totalBlogCount = await blogHandlerInstance.getTotalBlogCount();
 

@@ -38,8 +38,7 @@ const viewEditSingleListSiteMapStaticDocument = async (req, res, next) => {
         top_page: {
           title:     'Administrator Toolkit',
           tagline:   'All the functions that the administrator of the site has available to them',
-          fa_type:   'fas',
-          fa_choice: 'fa-toolbox',
+          bs_icon:   'tools',
         },
 
         content: {
@@ -53,7 +52,7 @@ const viewEditSingleListSiteMapStaticDocument = async (req, res, next) => {
           current_page:     'admin',
           current_sub_page: 'statics-edit',
         },
-      })
+      }),
     );
     next();
   } catch (e) {

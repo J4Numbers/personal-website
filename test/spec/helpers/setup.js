@@ -21,10 +21,15 @@
 // SOFTWARE.
 
 const chai = require('chai');
+const sinon = require('sinon');
+
 const chaiHttp = require('chai-http');
 const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
-const clearRequire = require('clear-require');
+
+const clearModule = require('clear-module');
+const importFresh = require('import-fresh');
+const mockRequire = require('mock-require');
 
 process.env.NODE_ENV = 'test';
 
@@ -32,10 +37,13 @@ chai.use(chaiAsPromised);
 chai.use(chaiHttp);
 chai.use(sinonChai);
 
-global.sinon = require('sinon');
+global.sinon = sinon;
 global.request = chai.request;
 global.expect = chai.expect;
 
-global.clearRequire = (module) => {
-  clearRequire(module);
-};
+// eslint-disable-next-line global-require
+global.testRequire = (moduleName) => require(moduleName);
+global.importFresh = (moduleName) => importFresh(moduleName);
+global.clearModule = (moduleName) => clearModule(moduleName);
+global.startMockRequire = (moduleName, replacement) => mockRequire(moduleName, replacement);
+global.stopMockRequire = (moduleName) => mockRequire.stop(moduleName);

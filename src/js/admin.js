@@ -42,7 +42,7 @@ const refreshMangaItems = () => {
 
 const generateNewEntry = (number) => {
   let controller = document.createElement('div');
-  controller.setAttribute('class', 'static-item mb4');
+  controller.setAttribute('class', 'static-item mb-4 container bg-light-darker p-2');
 
   let nameLabel = document.createElement('label');
   nameLabel.setAttribute('for', `sitemap-page-name-${number}`);
@@ -87,7 +87,7 @@ const addNewMapEntry = () => {
 
 const generateNewContactEntry = (number) => {
   let controller = document.createElement('div');
-  controller.setAttribute('class', 'static-item mb4');
+  controller.setAttribute('class', 'static-item mb-4 container bg-light-darker p-2');
 
   let nameLabel = document.createElement('label');
   nameLabel.setAttribute('for', `sitemap-contact-method-${number}`);
@@ -121,39 +121,23 @@ const generateNewContactEntry = (number) => {
   linkInput.setAttribute('name', `sitemap-page[${number}][contact_link]`);
   linkInput.setAttribute('id', `sitemap-contact-link-${number}`);
 
-  let faStyleLabel = document.createElement('label', {'for': `sitemap-contact-fa-style-${number}`});
-  faStyleLabel.setAttribute('for', `sitemap-contact-fa-style-${number}`);
-  let faStyleLabelName = document.createTextNode('Contact FA style');
-  faStyleLabel.appendChild(faStyleLabelName);
+  let bsIconLabel = document.createElement('label', {'for': `sitemap-contact-bs-icon-${number}`});
+  bsIconLabel.setAttribute('for', `sitemap-contact-bs-icon-${number}`);
+  let bsIconLabelName = document.createTextNode('Contact BS icon');
+  bsIconLabel.appendChild(bsIconLabelName);
 
-  let faStyleInput = document.createElement('input', {
+  let bsIconInput = document.createElement('input', {
     'class': 'form-control',
     'type': 'text',
-    'id': `sitemap-contact-fa-style-${number}`,
-    'name': `sitemap-page[${number}][fa_style]`
+    'id': `sitemap-contact-bs-icon-${number}`,
+    'name': `sitemap-page[${number}][bs_icon]`
   });
-  faStyleInput.setAttribute('class', 'form-control');
-  faStyleInput.setAttribute('type', 'text');
-  faStyleInput.setAttribute('name', `sitemap-page[${number}][fa_style]`);
-  faStyleInput.setAttribute('id', `sitemap-contact-fa-style-${number}`);
+  bsIconInput.setAttribute('class', 'form-control');
+  bsIconInput.setAttribute('type', 'text');
+  bsIconInput.setAttribute('name', `sitemap-page[${number}][bs_icon]`);
+  bsIconInput.setAttribute('id', `sitemap-contact-bs-icon-${number}`);
 
-  let faIconLabel = document.createElement('label', {'for': `sitemap-contact-fa-icon-${number}`});
-  faIconLabel.setAttribute('for', `sitemap-contact-fa-icon-${number}`);
-  let faIconLabelName = document.createTextNode('Contact FA icon');
-  faIconLabel.appendChild(faIconLabelName);
-
-  let faIconInput = document.createElement('input', {
-    'class': 'form-control',
-    'type': 'text',
-    'id': `sitemap-contact-fa-icon-${number}`,
-    'name': `sitemap-page[${number}][fa_icon]`
-  });
-  faIconInput.setAttribute('class', 'form-control');
-  faIconInput.setAttribute('type', 'text');
-  faIconInput.setAttribute('name', `sitemap-page[${number}][fa_icon]`);
-  faIconInput.setAttribute('id', `sitemap-contact-fa-icon-${number}`);
-
-  controller.append(nameLabel, nameInput, linkLabel, linkInput, faStyleLabel, faStyleInput, faIconLabel, faIconInput);
+  controller.append(nameLabel, nameInput, linkLabel, linkInput, bsIconLabel, bsIconInput);
   return controller;
 };
 

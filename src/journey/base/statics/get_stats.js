@@ -32,8 +32,7 @@ const getStatistics = async (req, res, next) => {
     top_page: {
       title:     'Statistics',
       tagline:   'Some statistics that relate directly to the site',
-      fa_type:   'fas',
-      fa_choice: 'fa-clipboard-check',
+      bs_icon:   'clipboard-check',
     },
 
     content: {

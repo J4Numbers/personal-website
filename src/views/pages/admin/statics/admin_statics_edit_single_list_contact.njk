@@ -7,15 +7,13 @@
         <form method="post" enctype="application/json" action="">
             <div class="contact-entries" id="contact-collection">
                 {% for map in content.static_detail %}
-                    <div class="static-item mb4">
+                    <div class="static-item mb-4 container bg-light-darker p-2">
                         <label for="sitemap-contact-method-{{ loop.index0 }}">Contact method</label>
                         <input class="form-control" id="sitemap-contact-method-{{ loop.index0 }}" name="sitemap-page[{{ loop.index0 }}][contact_method]" value="{{ map.contact_method }}" />
                         <label for="sitemap-contact-link-{{ loop.index0 }}">Contact link</label>
                         <input class="form-control" id="sitemap-contact-link-{{ loop.index0 }}" name="sitemap-page[{{ loop.index0 }}][contact_link]" value="{{ map.contact_link }}" />
-                        <label for="sitemap-contact-fa-style-{{ loop.index0 }}">Contact FA style</label>
-                        <input class="form-control" id="sitemap-contact-fa-style-{{ loop.index0 }}" name="sitemap-page[{{ loop.index0 }}][fa_style]" value="{{ map.fa_style }}" />
-                        <label for="sitemap-contact-fa-icon-{{ loop.index0 }}">Contact FA icon</label>
-                        <input class="form-control" id="sitemap-contact-fa-icon-{{ loop.index0 }}" name="sitemap-page[{{ loop.index0 }}][fa_icon]" value="{{ map.fa_icon }}" />
+                        <label for="sitemap-contact-bs-icon-{{ loop.index0 }}">Contact BS icon</label>
+                        <input class="form-control" id="sitemap-contact-bs-icon-{{ loop.index0 }}" name="sitemap-page[{{ loop.index0 }}][bs_icon]" value="{{ map.bs_icon }}" />
                     </div>
                 {% endfor %}
             </div>

@@ -9,6 +9,8 @@ $avatar-max: 19rem;
 $dark-darker: darken($dark, $colour-shade);
 $dark-lighter: lighten($dark, $colour-shade);
 
+$light-darker: darken($light, $colour-shade);
+
 $footer-color: color("gray-dark");
 
 $unavailable-color: color("orange");

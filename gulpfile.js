@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const npath = require('path');
-const sass = require('gulp-sass');
+const sassCompiler = require('sass');
+const sass = require('gulp-sass')(sassCompiler);
 const babel = require('gulp-babel');
 const clean = require('gulp-clean');
 
@@ -17,7 +18,7 @@ gulp.task('clean', () => gulp.src(
   {
     read:       false,
     allowEmpty: true,
-  }
+  },
 ).pipe(clean()));
 
 /* --------------------------------------------------------------------- INFO */
@@ -42,7 +43,6 @@ gulp.task('sass', () => gulp
     indentedSyntax:  false,
     includePaths:    [
       'node_modules/bootstrap/scss/*.scss',
-      'node_modules/font-awesome/scss/*.scss',
     ],
   }).on('error', sass.logError))
   .pipe(gulp.dest('./public/stylesheets')));
@@ -68,6 +68,7 @@ gulp.task('copy-scripts', () => gulp
 gulp.task('copy-images', () => gulp
   .src([
     './src/images/**/*.{png,ico,gif,jpg,svg}',
+    './node_modules/bootstrap-icons/*.svg',
   ])
   .pipe(gulp.dest('./public/images')));
 
@@ -75,7 +76,6 @@ gulp.task('copy-images', () => gulp
 gulp.task('copy-fonts', () => gulp
   .src([
     './src/fonts/*.{woff,woff2}',
-    './node_modules/font-awesome/fonts/*.{otf,eot,svg,ttf,woff,woff2}',
   ])
   .pipe(gulp.dest('./public/fonts')));
 
