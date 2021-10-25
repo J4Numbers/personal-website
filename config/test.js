@@ -28,8 +28,8 @@ module.exports = {
     port:     '8080',
   },
   jwt: {
-    public_cert: 'test/spec/helpers/certs/localhost-cert.pem',
-    private_key: 'test/spec/helpers/certs/localhost-privkey.pem',
+    public_cert: 'certs/localhost-cert.pem',
+    private_key: 'certs/localhost-privkey.pem',
   },
   nunjucks: {
     options: {

@@ -175,7 +175,7 @@ class AnimeHandler {
 
   fillInAnimeMetadata (
     animeToUpdate, ids, titles, myStatus, score, currentEps,
-    totalEps, airingStatus, synopsis, coverImgs, hash
+    totalEps, airingStatus, synopsis, coverImgs, hash,
   ) {
     animeToUpdate.anime_id = ids;
     animeToUpdate.title = titles;

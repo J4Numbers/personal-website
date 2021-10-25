@@ -18,7 +18,7 @@ gulp.task('clean', () => gulp.src(
   {
     read:       false,
     allowEmpty: true,
-  }
+  },
 ).pipe(clean()));
 
 /* --------------------------------------------------------------------- INFO */

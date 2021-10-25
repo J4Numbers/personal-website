@@ -53,7 +53,7 @@ const viewEditSingleListSiteMapStaticDocument = async (req, res, next) => {
           current_page:     'admin',
           current_sub_page: 'statics-edit',
         },
-      })
+      }),
     );
     next();
   } catch (e) {

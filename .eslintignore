@@ -1,3 +1,6 @@
+bin/
+config/local*
+data/
 public/
 src/gql
 src/js/

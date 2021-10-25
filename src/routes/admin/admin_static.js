@@ -36,24 +36,43 @@ const editTextDocument = require('../../journey/admin/statics/edit_static_text_d
 const editSitemapListDocument = require('../../journey/admin/statics/edit_static_sitemap_document');
 const editContactListDocument = require('../../journey/admin/statics/edit_static_contact_document');
 
+const staticList = [
+  {
+    name: statics.ABOUT_ME,
+    view: viewSingleTextStaticDocument,
+    edit: editSingleTextStaticDocument,
+    submit: editTextDocument,
+  },
+  {
+    name: statics.KNOWING_ME,
+    view: viewSingleTextStaticDocument,
+    edit: editSingleTextStaticDocument,
+    submit: editTextDocument,
+  },
+  {
+    name: statics.CONTACT_ME,
+    view: viewSingleListContactStaticDocument,
+    edit: editSingleListContactStaticDocument,
+    submit: editContactListDocument,
+  },
+  {
+    name: statics.SITEMAP,
+    view: viewSingleListSiteMapStaticDocument,
+    edit: editSingleListSiteMapStaticDocument,
+    submit: editSitemapListDocument,
+  },
+];
+
 module.exports = (server) => {
   server.get('/admin/statics', testLoggedIn, viewAllStatics);
 
-  server.get(`/admin/statics/${statics.ABOUT_ME}`, testLoggedIn, extractStatic, viewSingleTextStaticDocument);
-  server.get(`/admin/statics/${statics.KINK_WARNING}`, testLoggedIn, extractStatic, viewSingleTextStaticDocument);
-  server.get(`/admin/statics/${statics.KNOWING_ME}`, testLoggedIn, extractStatic, viewSingleTextStaticDocument);
-  server.get(`/admin/statics/${statics.CONTACT_ME}`, testLoggedIn, extractStatic, viewSingleListContactStaticDocument);
-  server.get(`/admin/statics/${statics.SITEMAP}`, testLoggedIn, extractStatic, viewSingleListSiteMapStaticDocument);
+  staticList.forEach((pageInfo) => {
+    server.get(`/admin/statics/${pageInfo.name}`, testLoggedIn, extractStatic, pageInfo.view);
+    server.get(`/admin/statics/${pageInfo.name}/edit`, testLoggedIn, extractStatic, pageInfo.edit);
 
-  server.get(`/admin/statics/${statics.ABOUT_ME}/edit`, testLoggedIn, extractStatic, editSingleTextStaticDocument);
-  server.get(`/admin/statics/${statics.KINK_WARNING}/edit`, testLoggedIn, extractStatic, editSingleTextStaticDocument);
-  server.get(`/admin/statics/${statics.KNOWING_ME}/edit`, testLoggedIn, extractStatic, editSingleTextStaticDocument);
-  server.get(`/admin/statics/${statics.CONTACT_ME}/edit`, testLoggedIn, extractStatic, editSingleListContactStaticDocument);
-  server.get(`/admin/statics/${statics.SITEMAP}/edit`, testLoggedIn, extractStatic, editSingleListSiteMapStaticDocument);
-
-  server.post(`/admin/statics/${statics.ABOUT_ME}/edit`, testLoggedIn, extractStatic, editTextDocument);
-  server.post(`/admin/statics/${statics.KINK_WARNING}/edit`, testLoggedIn, extractStatic, editTextDocument);
-  server.post(`/admin/statics/${statics.KNOWING_ME}/edit`, testLoggedIn, extractStatic, editTextDocument);
-  server.post(`/admin/statics/${statics.CONTACT_ME}/edit`, testLoggedIn, extractStatic, editContactListDocument);
-  server.post(`/admin/statics/${statics.SITEMAP}/edit`, testLoggedIn, extractStatic, editSitemapListDocument);
+    server.post(
+      `/admin/statics/${pageInfo.name}/edit`,
+      testLoggedIn, extractStatic, pageInfo.submit,
+    );
+  });
 };

@@ -89,7 +89,7 @@ class ArtHandler {
     if (typeof oldArtItem === 'undefined') {
       throw new Error('Could not find given art piece to update');
     } else {
-      oldArtItem = this.fillInArtMetadata(oldArtItem, title, completedDate, image, tags, notes,);
+      oldArtItem = this.fillInArtMetadata(oldArtItem, title, completedDate, image, tags, notes);
       return this.upsertArt(oldArtItem);
     }
   }
@@ -97,11 +97,13 @@ class ArtHandler {
   async addNewArtItem (title, completedDate, image, tags, notes) {
     let newArtPiece = new this.ArtPieceModel();
     newArtPiece._id = oId();
-    newArtPiece = this.fillInArtMetadata(newArtPiece, title, completedDate, image, tags, notes);
+    newArtPiece = ArtHandler.fillInArtMetadata(
+      newArtPiece, title, completedDate, image, tags, notes,
+    );
     return this.upsertArt(newArtPiece);
   }
 
-  fillInArtMetadata (artPieceToUpdate, title, completedDate, image, tags, notes) {
+  static fillInArtMetadata (artPieceToUpdate, title, completedDate, image, tags, notes) {
     artPieceToUpdate.title = title;
     artPieceToUpdate.date_completed = completedDate;
     artPieceToUpdate.image.thumb = image;

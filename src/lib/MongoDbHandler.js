@@ -57,7 +57,7 @@ class MongoDbHandler {
         { '_id': id },
         {},
         { upsert: true,
-          new:    true }
+          new:    true },
       );
     } catch (err) {
       logger.warn(err.message);
@@ -81,7 +81,7 @@ class MongoDbHandler {
         {},
         { skip,
           limit,
-          sort }
+          sort },
       );
     } catch (e) {
       logger.warn(e.message);

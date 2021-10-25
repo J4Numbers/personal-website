@@ -38,18 +38,22 @@ module.exports = (server) => {
   server.get('/admin/stories/:storyId/chapter/:chapterNumber', testLoggedIn, viewSingleChapter);
   server.get(
     '/admin/stories/:storyId/chapter/:chapterNumber/edit',
-    testLoggedIn, viewEditSingleChapter,
+    testLoggedIn,
+    viewEditSingleChapter,
   );
   server.post(
     '/admin/stories/:storyId/chapter/:chapterNumber/edit',
-    testLoggedIn, editSingleChapter,
+    testLoggedIn,
+    editSingleChapter,
   );
   server.get(
     '/admin/stories/:storyId/chapter/:chapterNumber/delete',
-    testLoggedIn, viewDeleteSingleChapter,
+    testLoggedIn,
+    viewDeleteSingleChapter,
   );
   server.post(
     '/admin/stories/:storyId/chapter/:chapterNumber/delete',
-    testLoggedIn, deleteSingleChapter,
+    testLoggedIn,
+    deleteSingleChapter,
   );
 };
