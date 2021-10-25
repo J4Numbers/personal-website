@@ -20,15 +20,39 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const fs = require('fs');
-const path = require('path');
+const config = require('config');
+const errors = require('restify-errors');
+
+const staticHandlerInstance = require('../../lib/StaticHandler').getHandler();
+const StaticDocumentTypes = require('../../lib/StaticDocumentTypes');
+
+const sitemapSorter = (a, b) => (
+  // eslint-disable-next-line no-nested-ternary
+  (a.page_name > b.page_name)
+    ? 1
+    : ((a.page_name < [ 'page_name' ]) ? -1 : 0));
 
 const displaySitemap = async (req, res, next) => {
-  const robots = fs.readFileSync(path.join(__dirname, '../../seo/sitemap.txt'));
-  res.contentType = 'text/plain';
-  res.header('Content-Type', 'text/plain');
-  res.send(200, robots);
-  next();
+  try {
+    const baseLink = `${
+      config.get('app.http2.enabled') ? 'https' : 'http'
+    }://${config.get('app.hostname')}:${config.get('app.port')}`;
+
+    const sitemapItems = await staticHandlerInstance.findStatic(StaticDocumentTypes.SITEMAP);
+    const sortedSiteMap = ((sitemapItems || {}).content || []).sort(sitemapSorter);
+    const sitemapText = sortedSiteMap.reduce(
+      (ongoing, current) => `${ongoing}${baseLink}${current.page_link}\n`,
+      '',
+    );
+
+    res.contentType = 'text/plain';
+    res.header('content-type', 'text/plain');
+    res.send(200, sitemapText);
+    next();
+  } catch (caught) {
+    req.log.warn(`Catch during find static :: ${caught}`);
+    next(new errors.InternalServerError(caught.message));
+  }
 };
 
 module.exports = displaySitemap;
