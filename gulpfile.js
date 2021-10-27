@@ -2,6 +2,7 @@ const gulp = require('gulp');
 const npath = require('path');
 const sassCompiler = require('sass');
 const sass = require('gulp-sass')(sassCompiler);
+const ts = require('gulp-typescript');
 const babel = require('gulp-babel');
 const clean = require('gulp-clean');
 
@@ -10,6 +11,8 @@ const clean = require('gulp-clean');
 
 const srcDir = './';
 const destDir = './public/';
+
+const tsProject = ts.createProject('./src/tsconfig.json');
 
 /* -------------------------------------------------------------------- CLEAN */
 
@@ -48,11 +51,17 @@ gulp.task('sass', () => gulp
   .pipe(gulp.dest('./public/stylesheets')));
 
 gulp.task('babel', () => gulp
-  .src([ npath.resolve(srcDir, 'src/js/**/*.js') ])
+  .src([ npath.resolve(srcDir, 'src/javascript/**/*.js') ])
   .pipe(babel({
     presets: [ '@babel/env' ],
   }))
   .pipe(gulp.dest('./public/javascript')));
+
+gulp.task('typescript', () => gulp
+  .src([ npath.resolve(srcDir, 'src/ts/**/*.ts') ])
+  .pipe(tsProject())
+  .js
+  .pipe(gulp.dest('./src/js')));
 
 // Copies javascript files to public folder
 gulp.task('copy-scripts', () => gulp
@@ -82,7 +91,11 @@ gulp.task('copy-fonts', () => gulp
 /* -------------------------------------------------------------------- Tasks */
 gulp.task(
   'build',
-  gulp.series('clean', 'sass', 'babel', 'copy-scripts', 'copy-images', 'copy-fonts'),
+  gulp.series(
+    'clean',
+    gulp.parallel('sass', 'babel', 'typescript'),
+    gulp.parallel('copy-scripts', 'copy-images', 'copy-fonts'),
+  ),
 );
 
 gulp.task('default', gulp.series('build'));
