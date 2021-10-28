@@ -23,11 +23,11 @@
 const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
-const artHandlerInstance = require('../../../lib/ArtHandler').getHandler();
+const artHandler = require('../../../js/handlers').fetchArtHandler();
 
 const getOneArt = async (req, res, next) => {
   try {
-    const picture = await artHandlerInstance.findArtByRawId(req.params.artId);
+    const picture = await artHandler.getArtById(req.params.artId);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/art/art_one.njk', {

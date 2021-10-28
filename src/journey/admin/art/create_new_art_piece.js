@@ -21,20 +21,31 @@
 // SOFTWARE.
 
 const fs = require('fs');
+const sharp = require('sharp');
 
-const ArtHandler = require('../../../lib/ArtHandler');
-const artHandlerInstance = ArtHandler.getHandler();
+const artHandler = require('../../../js/handlers').fetchArtHandler();
 
 const postNewArtPiece = async (req, res, next) => {
   try {
     req.log.info(`Reading in new image from ${req.files[ 'art-image' ].path}`);
+    const thumbPromise = await sharp(fs.readFileSync(req.files[ 'art-image' ].path))
+      .resize({ width: 200 })
+      .toBuffer();
+    const thumbImage = thumbPromise.toString('base64');
     const imageAsBase64 = fs.readFileSync(req.files[ 'art-image' ].path, 'base64');
-    const savedArt = await artHandlerInstance.addNewArtItem(
-      req.body[ 'art-title' ], req.body[ 'art-completed-date' ],
-      imageAsBase64,
-      req.body[ 'art-tags' ].split(/, ?/u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-      req.body[ 'art-notes' ],
-    );
+    const savedArt = await artHandler.submitArt({
+      title: req.body[ 'art-title' ],
+      date_completed: req.body[ 'art-completed-date' ],
+      image: {
+        thumb: thumbImage,
+        full_size: imageAsBase64,
+      },
+      notes: req.body[ 'art-notes' ],
+      tags: req.body[ 'art-tags' ]
+        .split(/, ?/u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+    });
     res.redirect(303, `/admin/art/${savedArt._id}`, next);
   } catch (e) {
     req.log.warn(`Issue found when trying to create new art piece :: ${e.message}`);

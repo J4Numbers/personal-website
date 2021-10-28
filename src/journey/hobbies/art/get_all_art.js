@@ -23,16 +23,15 @@
 const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
-const artHandlerInstance = require('../../../lib/ArtHandler').getHandler();
+const artHandler = require('../../../js/handlers').fetchArtHandler();
 
 const getAllArt = async (req, res, next) => {
   try {
-    const allPictures = await artHandlerInstance.findAllArtPieces(
-      Math.max(0, ((req.query.page || 1) - 1)) * 12,
-      12,
-      { 'date_completed': -1 },
+    const allPictures = await artHandler.lookupArtPieces(
+      req.query.page || 1, 12,
     );
-    const pictureCount = await artHandlerInstance.getTotalArtPieceCount();
+    const pictureCount = await artHandler.getTotalArtCount();
+
     let baseUrl = '';
     if (req.query.q) {
       baseUrl += `q=${req.query.q}&`;
