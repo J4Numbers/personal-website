@@ -22,20 +22,17 @@
 
 const errors = require('restify-errors');
 
-const BlogHandler = require('../../../lib/BlogHandler');
-const blogHandlerInstance = BlogHandler.getHandler();
+const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
 const viewBlogHome = async (req, res, next) => {
   try {
-    const blogs = await blogHandlerInstance.findBlogs(
-      Math.max(0, ((req.query.page || 1) - 1)) * 10,
-      10,
-      { 'time_posted': -1 },
-      false,
+    const blogs = await blogHandler.listBlogPosts(
+      req.query.page || 1, 10, false,
     );
-    const totalCount = await blogHandlerInstance.getTotalBlogCount(false);
+    const totalCount = await blogHandler.getTotalBlogCount(false);
+
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/blogs/admin_blog_view.njk', {

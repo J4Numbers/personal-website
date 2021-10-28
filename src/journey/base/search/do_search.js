@@ -24,7 +24,7 @@ const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
 const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
 const artHandler = require('../../../js/handlers').fetchArtHandler();
-const blogHandler = require('../../../lib/BlogHandler').getHandler();
+const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
 const storyHandler = require('../../../lib/StoryHandler').getHandler();
 
@@ -70,14 +70,7 @@ const doSearch = async (req, res, next) => {
     Promise.all([
       animeHandler.lookupAnimeTitle(renderVars.search, tagList),
       artHandler.lookupArtTitles(renderVars.search, tagList),
-      blogHandler.findBlogsByQuery({
-        $or: [ query, {
-          'long_title': {
-            $regex:   renderVars.search,
-            $options: 'i',
-          },
-        } ],
-      }, 0, 10, { 'long_title': -1 }),
+      blogHandler.lookupBlogs(renderVars.search, tagList),
       mangaHandler.lookupMangaTitle(renderVars.search, tagList),
       storyHandler.findStoriesByQuery({
         $or: [ query, {

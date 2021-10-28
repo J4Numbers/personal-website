@@ -25,11 +25,11 @@ const renderer = require('../../../lib/renderer').nunjucksRenderer();
 const markdown = require('markdown-it')();
 const errors = require('restify-errors');
 
-const blogHandlerInstance = require('../../../lib/BlogHandler').getHandler();
+const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 
 const getSingleExtendedBlog = async (req, res, next) => {
   try {
-    const blogPost = await blogHandlerInstance.findBlog(req.params.blogId);
+    const blogPost = await blogHandler.getBlogById(req.params.blogId);
     if (blogPost !== null) {
       res.contentType = 'text/html';
       res.header('content-type', 'text/html');

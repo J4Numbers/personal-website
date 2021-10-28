@@ -22,14 +22,13 @@
 
 const errors = require('restify-errors');
 
-const BlogHandler = require('../../../lib/BlogHandler');
-const blogHandlerInstance = BlogHandler.getHandler();
+const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
 const viewOneBlog = async (req, res, next) => {
   try {
     res.log.info(`Searching for blog of id ${req.params.blogId}`);
-    const blog = await blogHandlerInstance.findBlog(req.params.blogId);
+    const blog = await blogHandler.getBlogById(req.params.blogId);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     const page = renderer.render('pages/admin/blogs/admin_blog_view_single.njk', {
