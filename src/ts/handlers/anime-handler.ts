@@ -9,7 +9,35 @@ export default class AnimeHandler {
   }
 
   async getAnimeById(id: string): Promise<AnimeDataItem> {
-    return (await this.animeDataHandler.findAnimeByRawId(id)).toObject() as unknown as AnimeDataItem;
+    return this.animeDataHandler.findAnimeByRawId(id);
+  }
+
+  async lookupAnimeAniListId(id: string): Promise<AnimeDataItem | undefined> {
+    const foundItems = await this.animeDataHandler.findAnimeShowsByQuery(
+      { 'anime_id.ani_list': id }, 0, 1, {});
+    if (foundItems.length > 0) {
+      return foundItems[0];
+    } else {
+      return undefined;
+    }
+  }
+
+  async lookupAnimeTitle(title: string, tags: Array<string>): Promise<Array<AnimeDataItem>> {
+    return this.animeDataHandler.findAnimeShowsByQuery({
+      $or: [
+        {
+          tags: {
+            $all: tags,
+          },
+        },
+        {
+          'title.romaji': {
+            $regex:   title,
+            $options: 'i',
+          },
+        },
+      ],
+    }, 0, 10, { 'title.romaji': -1 });
   }
 
   async lookupAnimeShows(currentPage: number, maxPerPage: number, category='') {
@@ -21,5 +49,9 @@ export default class AnimeHandler {
 
   async getTotalShowCount(category='') {
     return this.animeDataHandler.getTotalShowCount(category);
+  }
+
+  async submitAnime(editDetails: AnimeDataItem): Promise<AnimeDataItem> {
+    return this.animeDataHandler.upsertAnime(editDetails);
   }
 }

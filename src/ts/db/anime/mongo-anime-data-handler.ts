@@ -44,29 +44,7 @@ export default class MongoAnimeDataHandler extends StandardAnimeDataHandler {
     this.dataModel = this.dataHandler.bootModel('AnimeShow', this.dataSchema);
   }
 
-  async addNewAnime(newAnime: AnimeDataItem): Promise<Document<AnimeDataItem>> {
-    let animeToSave = new this.dataModel(newAnime);
-    return this.upsertAnime(animeToSave);
-  }
-
-  async editAnime(animeId: string, reviewText: string, tagList: Array<string>): Promise<Document<AnimeDataItem>> {
-    let oldAnimeShow = await this.findAnimeByRawId(animeId);
-    if (typeof oldAnimeShow === 'undefined') {
-      throw new Error('Could not find given show to update');
-    } else {
-      oldAnimeShow.set('review', reviewText);
-      oldAnimeShow.set('tags', tagList);
-      oldAnimeShow.set('time_updated', Date.now());
-      return this.upsertAnime(oldAnimeShow);
-    }
-  }
-
-  async findAnimeByAniListId(aniListId: number): Promise<Array<AnimeDataItem>> {
-    return this.dataHandler
-      .findFromQuery(this.dataModel, { 'anime_id.ani_list': aniListId }, 0, 1, {});
-  }
-
-  async findAnimeByRawId(rawId: string): Promise<Document<AnimeDataItem>> {
+  async findAnimeByRawId(rawId: string): Promise<AnimeDataItem> {
     return this.dataHandler.findById(this.dataModel, rawId);
   }
 
@@ -109,17 +87,19 @@ export default class MongoAnimeDataHandler extends StandardAnimeDataHandler {
       .getTotalCountFromQuery(this.dataModel, this.buildQuery(category));
   }
 
-  async updateExistingAnime(updatedAnime: AnimeDataItem): Promise<Document<AnimeDataItem>> {
-    let oldAnimeItem = await this.findAnimeByRawId(updatedAnime._id);
-    if (typeof oldAnimeItem === 'undefined') {
-      throw new Error('Could not find given anime to update');
+  async upsertAnime(animeToUpsert: AnimeDataItem): Promise<AnimeDataItem> {
+    let dataToUpsert: Document<AnimeDataItem>;
+    if (animeToUpsert._id !== undefined) {
+      dataToUpsert = await this.dataHandler.findById(this.dataModel, animeToUpsert._id);
+      if (typeof dataToUpsert === 'undefined') {
+        throw new Error('Could not find given anime to update');
+      } else {
+        dataToUpsert.set(animeToUpsert);
+      }
     } else {
-      oldAnimeItem.set(updatedAnime);
-      return this.upsertAnime(oldAnimeItem);
+      dataToUpsert = new Document<AnimeDataItem>(animeToUpsert);
     }
-  }
-
-  async upsertAnime(animeToUpsert: Document<AnimeDataItem>): Promise<Document<AnimeDataItem>> {
-    return this.dataHandler.upsertItem(animeToUpsert);
+    dataToUpsert.set('time_updated', Date.now());
+    return (await this.dataHandler.upsertItem(dataToUpsert)) as unknown as AnimeDataItem;
   }
 }
