@@ -24,12 +24,11 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const MangaHandler = require('../../../lib/MangaHandler');
-const mangaHandlerInstance = MangaHandler.getHandler();
+const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
 
 const viewEditSingleManga = async (req, res, next) => {
   try {
-    const book = await mangaHandlerInstance.findMangaByRawId(req.params.mangaId);
+    const book = await mangaHandler.getMangaById(req.params.mangaId);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/manga/admin_manga_edit_single.njk', {
