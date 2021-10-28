@@ -20,20 +20,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const BlogHandler = require('../../../lib/BlogHandler');
-const blogHandlerInstance = BlogHandler.getHandler();
+const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 
 const postNewBlog = async (req, res, next) => {
   try {
-    const savedBlog = await blogHandlerInstance.insertBlog(
-      req.body[ 'blog-title' ], req.body[ 'blog-text' ],
-      req.body[ 'blog-visible' ] === 'Y',
-      req.body[ 'blog-tags' ].split(/, ?/u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-    );
+    const savedBlog = await blogHandler.submitBlog({
+      long_title: req.body[ 'blog-title' ],
+      short_title: req.body[ 'blog-title' ]
+        .replace(/ /gu, '-')
+        .replace(/\p{Z}/gu, '')
+        .toLocaleLowerCase(),
+      full_text: req.body[ 'blog-text' ],
+      public: req.body[ 'blog-visible' ] === 'Y',
+      tags: req.body[ 'blog-tags' ]
+        .split(/, ?/u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+      time_posted: new Date(),
+    });
     res.redirect(303, `/admin/blog/${savedBlog._id}`, next);
     next();
   } catch (e) {
-    req.log.warn({ error: e });
+    req.log.warn(`Issue found when trying to create new blog :: ${e.message}`);
     res.redirect(303, '/admin/blog/new', next);
   }
 };

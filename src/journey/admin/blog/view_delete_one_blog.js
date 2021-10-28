@@ -22,13 +22,12 @@
 
 const errors = require('restify-errors');
 
-const BlogHandler = require('../../../lib/BlogHandler');
-const blogHandlerInstance = BlogHandler.getHandler();
+const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
 const viewDeleteBlog = async (req, res, next) => {
   try {
-    const blog = await blogHandlerInstance.findBlog(req.params.blogId);
+    const blog = await blogHandler.getBlogById(req.params.blogId);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/blogs/admin_blog_delete_single.njk', {

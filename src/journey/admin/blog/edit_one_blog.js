@@ -20,16 +20,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const BlogHandler = require('../../../lib/BlogHandler');
-const blogHandlerInstance = BlogHandler.getHandler();
+const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 
 const postEditDetails = async (req, res, next) => {
   try {
-    await blogHandlerInstance.editBlog(
-      req.params.blogId, req.body[ 'blog-title' ],
-      req.body[ 'blog-text' ], req.body[ 'blog-visible' ] === 'Y',
-      req.body[ 'blog-tags' ].split(/, ?/u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-    );
+    await blogHandler.submitBlog({
+      _id: req.params.blogId,
+      long_title: req.body[ 'blog-title' ],
+      short_title: req.body[ 'blog-title' ]
+        .replace(/ /gu, '-')
+        .replace(/\p{Z}/gu, '')
+        .toLocaleLowerCase(),
+      full_text: req.body[ 'blog-text' ],
+      public: req.body[ 'blog-visible' ] === 'Y',
+      tags: req.body[ 'blog-tags' ]
+        .split(/, ?/u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+    });
     res.redirect(303, `/admin/blog/${req.params.blogId}`, next);
   } catch (e) {
     req.log.warn(`Issue found updating blog_id: ${req.params.blogId} :: ${e.message}`);
