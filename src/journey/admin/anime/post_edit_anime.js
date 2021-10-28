@@ -20,14 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const animeHandlerInstance = require('../../../lib/AnimeHandler').getHandler();
+const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
 
 const postEditAnime = async (req, res, next) => {
   try {
-    await animeHandlerInstance.editAnime(
-      req.params.animeId, req.body[ 'show-review' ],
-      req.body[ 'show-tags' ].split(/, ?/u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-    );
+    await animeHandler.submitAnime({
+      _id: req.params.animeId,
+      review: req.body[ 'show-review' ],
+      tags: req.body[ 'show-tags' ]
+        .split(/, ?/u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+    });
     res.redirect(303, `/admin/anime/${req.params.animeId}`, next);
   } catch (e) {
     req.log.warn(`Issue found when trying to post new anime edits :: ${e.message}`);

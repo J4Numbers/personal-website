@@ -11,9 +11,9 @@ export enum AnimeStatus {
 export interface AnimeDataItem extends BasicDataItem {
   'last_hash': string,
   'anime_id':  {
-    'ani_list':      number,
-    'my_anime_list': number,
-    'ani_db':        number,
+    'ani_list'?:      number,
+    'my_anime_list'?: number,
+    'ani_db'?:        number,
   },
 
   'anime_status': AnimeStatus,
@@ -32,7 +32,7 @@ export interface AnimeDataItem extends BasicDataItem {
     'medium': string,
   },
 
-  'tags':         Array<string>,
-  'time_updated': Date,
-  'review':       string,
+  'tags'?:         Array<string>,
+  'time_updated'?: Date,
+  'review'?:       string,
 }

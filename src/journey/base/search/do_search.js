@@ -22,7 +22,7 @@
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const animeHandler = require('../../../lib/AnimeHandler').getHandler();
+const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
 const artHandler = require('../../../lib/ArtHandler').getHandler();
 const blogHandler = require('../../../lib/BlogHandler').getHandler();
 const mangaHandler = require('../../../lib/MangaHandler').getHandler();
@@ -68,14 +68,7 @@ const doSearch = async (req, res, next) => {
     };
 
     Promise.all([
-      animeHandler.findAnimeShowsByQuery({
-        $or: [ query, {
-          'title.romaji': {
-            $regex:   renderVars.search,
-            $options: 'i',
-          },
-        } ],
-      }, 0, 10, { 'title.romaji': -1 }),
+      animeHandler.lookupAnimeTitle(renderVars.search, tagList),
       artHandler.findArtPiecesByQuery({
         $or: [ query, {
           'title': {

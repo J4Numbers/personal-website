@@ -23,48 +23,41 @@
 const crypto = require('crypto');
 
 const aniListHandlerInstance = require('./AniListHandler').getHandler();
-const mongoAnimeHandlerInstance = require('./AnimeHandler').getHandler();
+const animeHandler = require('../js/handlers').fetchAnimeHandler();
 const mongoMangaHandlerInstance = require('./MangaHandler').getHandler();
 
 const logger = require('./logger').bunyanLogger();
 
+function buildAnimeDataObject (newAnimeToSubmit) {
+  return {
+    'last_hash': crypto.createHash('sha256').update(JSON.stringify(newAnimeToSubmit)).digest('hex'),
+    'anime_id':  {
+      'ani_list': newAnimeToSubmit.media.id,
+      'my_anime_list': newAnimeToSubmit.media.idMal,
+    },
+
+    'anime_status': newAnimeToSubmit.media.status,
+    'title': newAnimeToSubmit.media.title,
+    'score': newAnimeToSubmit.score,
+    'status': newAnimeToSubmit.status,
+    'total_eps': newAnimeToSubmit.media.episodes,
+    'current_ep': newAnimeToSubmit.progress,
+    'synopsis': newAnimeToSubmit.media.description,
+    'cover_img': newAnimeToSubmit.media.coverImage,
+  };
+}
+
 async function resolveInsertNewAnime (newAnimetoInsert) {
   logger.info(`Inserting new show with id ${newAnimetoInsert.media.id}`);
-  await mongoAnimeHandlerInstance.addNewAnime(
-    {
-      'ani_list':      newAnimetoInsert.media.id,
-      'my_anime_list': newAnimetoInsert.media.idMal,
-    },
-    newAnimetoInsert.media.title,
-    newAnimetoInsert.status,
-    newAnimetoInsert.score,
-    newAnimetoInsert.progress,
-    newAnimetoInsert.media.episodes,
-    newAnimetoInsert.media.status,
-    newAnimetoInsert.media.description,
-    newAnimetoInsert.media.coverImage,
-    crypto.createHash('sha256').update(JSON.stringify(newAnimetoInsert)).digest('hex'),
-  );
+  await animeHandler.submitAnime(buildAnimeDataObject(newAnimetoInsert));
 }
 
 async function resolveOverwriteExistingAnime (oldId, oldAnimeToOverwrite) {
   logger.info(`Overwriting existing show with id ${oldAnimeToOverwrite.media.id}`);
-  await mongoAnimeHandlerInstance.updateExistingAnime(
-    oldId,
-    {
-      'ani_list':      oldAnimeToOverwrite.media.id,
-      'my_anime_list': oldAnimeToOverwrite.media.idMal,
-    },
-    oldAnimeToOverwrite.media.title,
-    oldAnimeToOverwrite.status,
-    oldAnimeToOverwrite.score,
-    oldAnimeToOverwrite.progress,
-    oldAnimeToOverwrite.media.episodes,
-    oldAnimeToOverwrite.media.status,
-    oldAnimeToOverwrite.media.description,
-    oldAnimeToOverwrite.media.coverImage,
-    crypto.createHash('sha256').update(JSON.stringify(oldAnimeToOverwrite)).digest('hex'),
-  );
+  await animeHandler.submitAnime({
+    '_id': oldId,
+    ...buildAnimeDataObject(oldAnimeToOverwrite),
+  });
 }
 
 // ids, titles, mangaType, myStatus, score, currentVol, currentChap,
@@ -121,12 +114,12 @@ async function importAnimeAniListItemsIntoMongo () {
   while (mediaItems.length > 0) {
     logger.info(`Scraped ${mediaItems.length} shows from AniList`);
     mediaItems.forEach(async (media) => {
-      const record = await mongoAnimeHandlerInstance
-        .findAnimeByAniListId(media.media.id);
-      if (record.length > 0) {
-        if (record[ 0 ].last_hash !== crypto.createHash('sha256')
+      const record = await animeHandler
+        .lookupAnimeAniListId(media.media.id);
+      if (record !== undefined) {
+        if (record.last_hash !== crypto.createHash('sha256')
           .update(JSON.stringify(media)).digest('hex')) {
-          await resolveOverwriteExistingAnime(record[ 0 ]._id, media);
+          await resolveOverwriteExistingAnime(record._id, media);
         }
       } else {
         await resolveInsertNewAnime(media);
