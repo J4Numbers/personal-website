@@ -20,17 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const ArtHandler = require('../../../lib/ArtHandler');
-const artHandlerInstance = ArtHandler.getHandler();
+const artHandler = require('../../../js/handlers').fetchArtHandler();
 
 const submitEditedArtPiece = async (req, res, next) => {
   try {
-    await artHandlerInstance.updateExistingArtPiece(
-      req.params.artId, req.body[ 'art-title' ],
-      req.body[ 'art-completed-date' ], req.files[ 'art-image' ],
-      req.body[ 'art-tags' ].split(/, ?/u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-      req.body[ 'art-notes' ],
-    );
+    await artHandler.submitArt({
+      _id: req.params.artId,
+      title: req.body[ 'art-title' ],
+      date_completed: req.body[ 'art-completed-date' ],
+      notes: req.body[ 'art-nodes' ],
+      tags: req.body[ 'art-tags' ]
+        .split(/, ?/u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+    });
     res.redirect(303, `/admin/art/${req.params.artId}`, next);
   } catch (e) {
     req.log.warn(`Issue found when trying to edit art piece :: ${e.message}`);
