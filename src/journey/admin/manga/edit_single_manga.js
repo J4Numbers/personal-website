@@ -20,15 +20,18 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const MangaHandler = require('../../../lib/MangaHandler');
-const mangaHandlerInstance = MangaHandler.getHandler();
+const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
 
 const editSingleManga = async (req, res, next) => {
   try {
-    await mangaHandlerInstance.editManga(
-      req.params.mangaId, req.body[ 'book-review' ],
-      req.body[ 'book-tags' ].split(/, ?/u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-    );
+    await mangaHandler.submitManga({
+      _id: req.params.mangaId,
+      review: req.body[ 'book-review' ],
+      tags: req.body[ 'book-tags' ]
+        .split(/, ?/u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+    });
     res.redirect(303, `/admin/manga/${req.params.mangaId}`, next);
   } catch (e) {
     req.log.warn(`Issue found when trying to update manga :: ${e.message}`);

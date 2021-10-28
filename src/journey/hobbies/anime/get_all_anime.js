@@ -28,7 +28,7 @@ const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
 const getAllAnime = async (req, res, next) => {
   try {
     const allShows = await animeHandler.lookupAnimeShows(
-      req.query.page || 1, 10, '',
+      req.query.page || 1, 12, '',
     );
     const allShowCount = await animeHandler.getTotalShowCount('');
 

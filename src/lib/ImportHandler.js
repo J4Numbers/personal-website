@@ -24,7 +24,7 @@ const crypto = require('crypto');
 
 const aniListHandlerInstance = require('./AniListHandler').getHandler();
 const animeHandler = require('../js/handlers').fetchAnimeHandler();
-const mongoMangaHandlerInstance = require('./MangaHandler').getHandler();
+const mangaHandler = require('../js/handlers').fetchMangaHandler();
 
 const logger = require('./logger').bunyanLogger();
 
@@ -47,6 +47,28 @@ function buildAnimeDataObject (newAnimeToSubmit) {
   };
 }
 
+function buildMangaDataObject (newMangaToSubmit) {
+  return {
+    'last_hash': crypto.createHash('sha256').update(JSON.stringify(newMangaToSubmit)).digest('hex'),
+    'manga_id': {
+      'ani_list':      newMangaToSubmit.media.id,
+      'my_anime_list': newMangaToSubmit.media.idMal,
+    },
+
+    'manga_status': newMangaToSubmit.media.status,
+    'story_type':   newMangaToSubmit.format,
+    'title':        newMangaToSubmit.media.title,
+    'score':        newMangaToSubmit.score,
+    'status':       newMangaToSubmit.status,
+    'total_vols':   newMangaToSubmit.media.volumes,
+    'total_chaps':  newMangaToSubmit.media.chapters,
+    'current_vol':  newMangaToSubmit.progressVolumes,
+    'current_chap': newMangaToSubmit.progress,
+    'synopsis':     newMangaToSubmit.media.description,
+    'cover_img':    newMangaToSubmit.media.coverImage,
+  };
+}
+
 async function resolveInsertNewAnime (newAnimetoInsert) {
   logger.info(`Inserting new show with id ${newAnimetoInsert.media.id}`);
   await animeHandler.submitAnime(buildAnimeDataObject(newAnimetoInsert));
@@ -60,51 +82,17 @@ async function resolveOverwriteExistingAnime (oldId, oldAnimeToOverwrite) {
   });
 }
 
-// ids, titles, mangaType, myStatus, score, currentVol, currentChap,
-// totalVols, totalChaps, airingStatus, synopsis, coverImgs, hash
-async function resolveInsertNewManga (newMangatoInsert) {
-  logger.info(`Inserting new book with id ${newMangatoInsert.media.id}`);
-  await mongoMangaHandlerInstance.addNewManga(
-    {
-      'ani_list':      newMangatoInsert.media.id,
-      'my_anime_list': newMangatoInsert.media.idMal,
-    },
-    newMangatoInsert.media.title,
-    newMangatoInsert.format,
-    newMangatoInsert.status,
-    newMangatoInsert.score,
-    newMangatoInsert.progressVolumes,
-    newMangatoInsert.progress,
-    newMangatoInsert.media.volumes,
-    newMangatoInsert.media.chapters,
-    newMangatoInsert.media.status,
-    newMangatoInsert.media.description,
-    newMangatoInsert.media.coverImage,
-    crypto.createHash('sha256').update(JSON.stringify(newMangatoInsert)).digest('hex'),
-  );
+async function resolveInsertNewManga (newMangaToInsert) {
+  logger.info(`Inserting new book with id ${newMangaToInsert.media.id}`);
+  await mangaHandler.submitManga(buildMangaDataObject(newMangaToInsert));
 }
 
-async function resolveOverwriteExistingManga (oldId, newMangatoInsert) {
-  logger.info(`Inserting new book with id ${newMangatoInsert.media.id}`);
-  await mongoMangaHandlerInstance.updateExistingManga(
-    oldId,
-    {
-      'ani_list':      newMangatoInsert.media.id,
-      'my_anime_list': newMangatoInsert.media.idMal,
-    },
-    newMangatoInsert.media.title,
-    newMangatoInsert.format,
-    newMangatoInsert.status,
-    newMangatoInsert.score,
-    newMangatoInsert.progressVolumes,
-    newMangatoInsert.progress,
-    newMangatoInsert.media.volumes,
-    newMangatoInsert.media.chapters,
-    newMangatoInsert.media.status,
-    newMangatoInsert.media.description,
-    newMangatoInsert.media.coverImage,
-    crypto.createHash('sha256').update(JSON.stringify(newMangatoInsert)).digest('hex'),
-  );
+async function resolveOverwriteExistingManga (oldId, newMangaToInsert) {
+  logger.info(`Inserting new book with id ${newMangaToInsert.media.id}`);
+  await mangaHandler.submitManga({
+    '_id': oldId,
+    ...buildMangaDataObject(newMangaToInsert),
+  });
 }
 
 async function importAnimeAniListItemsIntoMongo () {
@@ -138,12 +126,12 @@ async function importMangaAniListItemsIntoMongo () {
   while (mediaItems.length > 0) {
     logger.info(`Scraped ${mediaItems.length} books from AniList`);
     mediaItems.forEach(async (media) => {
-      const record = await mongoMangaHandlerInstance
-        .findMangaByAniListId(media.media.id);
-      if (record.length > 0) {
-        if (record[ 0 ].last_hash !== crypto.createHash('sha256')
+      const record = await mangaHandler
+        .lookupMangaAniListId(media.media.id);
+      if (record !== undefined) {
+        if (record.last_hash !== crypto.createHash('sha256')
           .update(JSON.stringify(media)).digest('hex')) {
-          await resolveOverwriteExistingManga(record[ 0 ]._id, media);
+          await resolveOverwriteExistingManga(record._id, media);
         }
       } else {
         await resolveInsertNewManga(media);

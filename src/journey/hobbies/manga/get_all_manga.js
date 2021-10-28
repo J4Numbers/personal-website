@@ -23,17 +23,15 @@
 const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
-const mangaHandlerInstance = require('../../../lib/MangaHandler').getHandler();
+const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
 
 const getAllManga = async (req, res, next) => {
   try {
-    const allBooks = await mangaHandlerInstance.findMangaBooks(
-      Math.max(0, ((req.query.page || 1) - 1)) * 12,
-      12,
-      { 'title.romaji': 1 },
-      req.query.category,
+    const allBooks = await mangaHandler.lookupMangaStories(
+      req.query.page || 1, 12, req.query.category || '',
     );
-    const totalCount = await mangaHandlerInstance.getTotalBookCount(req.query.category || '');
+    const totalCount = await mangaHandler.getTotalStoryCount(req.query.category || '');
+
     let baseUrl = '';
     if (req.query.category) {
       baseUrl += `category=${req.query.category}&`;

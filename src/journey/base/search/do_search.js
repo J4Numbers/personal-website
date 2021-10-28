@@ -25,7 +25,7 @@ const renderer = require('../../../lib/renderer').nunjucksRenderer();
 const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
 const artHandler = require('../../../lib/ArtHandler').getHandler();
 const blogHandler = require('../../../lib/BlogHandler').getHandler();
-const mangaHandler = require('../../../lib/MangaHandler').getHandler();
+const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
 const storyHandler = require('../../../lib/StoryHandler').getHandler();
 
 // TODO: Fix
@@ -85,14 +85,7 @@ const doSearch = async (req, res, next) => {
           },
         } ],
       }, 0, 10, { 'long_title': -1 }),
-      mangaHandler.findMangaBooksByQuery({
-        $or: [ query, {
-          'title.romaji': {
-            $regex:   renderVars.search,
-            $options: 'i',
-          },
-        } ],
-      }, 0, 10, { 'title.romaji': -1 }),
+      mangaHandler.lookupMangaTitle(renderVars.search, tagList),
       storyHandler.findStoriesByQuery({
         $or: [ query, {
           'title': {
