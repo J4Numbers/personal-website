@@ -17,7 +17,7 @@ const tsProject = ts.createProject('./src/tsconfig.json');
 /* -------------------------------------------------------------------- CLEAN */
 
 gulp.task('clean', () => gulp.src(
-  [ npath.resolve(destDir) ],
+  [ npath.resolve(destDir), './src/js' ],
   {
     read:       false,
     allowEmpty: true,

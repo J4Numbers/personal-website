@@ -1,7 +1,7 @@
 import StandardAnimeDataHandler from './standard-anime-data-handler';
 import MongoConnectionHandler from '../handlers/mongo-connection-handler';
 import {AnimeDataItem, AnimeStatus} from '../../objects/AnimeDataItem';
-import {Model, Schema, Date, SortValues, QueryOptions, Document} from 'mongoose';
+import {Model, Schema, Date, SortValues, QueryOptions, Document, Types} from 'mongoose';
 
 export default class MongoAnimeDataHandler extends StandardAnimeDataHandler {
   dataHandler: MongoConnectionHandler<AnimeDataItem>;
@@ -97,7 +97,8 @@ export default class MongoAnimeDataHandler extends StandardAnimeDataHandler {
         dataToUpsert.set(animeToUpsert);
       }
     } else {
-      dataToUpsert = new Document<AnimeDataItem>(animeToUpsert);
+      dataToUpsert = new this.dataModel(animeToUpsert);
+      dataToUpsert.set('_id', new Types.ObjectId());
     }
     dataToUpsert.set('time_updated', Date.now());
     return (await this.dataHandler.upsertItem(dataToUpsert)) as unknown as AnimeDataItem;

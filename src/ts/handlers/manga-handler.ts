@@ -12,9 +12,9 @@ export default class MangaHandler {
     return this.mangaDataHandler.findMangaByRawId(id);
   }
 
-  async lookupMangaAniListId(id: string): Promise<MangaDataItem | undefined> {
+  async lookupMangaAniListId(id: number): Promise<MangaDataItem | undefined> {
     const foundItems = await this.mangaDataHandler.findMangaStoriesByQuery(
-      { 'anime_id.ani_list': id }, 0, 1, {});
+      { 'manga_id.ani_list': id }, 0, 1, {});
     if (foundItems.length > 0) {
       return foundItems[0];
     } else {
