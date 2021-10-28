@@ -1,6 +1,6 @@
 import StandardMangaDataHandler from './standard-manga-data-handler';
 import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {Model, Schema, Date, SortValues, QueryOptions, Document} from 'mongoose';
+import {Model, Schema, Date, SortValues, QueryOptions, Document, Types} from 'mongoose';
 import {MangaDataItem, MangaStatus} from '../../objects/MangaDataItem';
 
 export default class MongoMangaDataHandler extends StandardMangaDataHandler {
@@ -100,7 +100,8 @@ export default class MongoMangaDataHandler extends StandardMangaDataHandler {
         dataToUpsert.set(mangaToUpsert);
       }
     } else {
-      dataToUpsert = new Document<MangaDataItem>(mangaToUpsert);
+      dataToUpsert = new this.dataModel(mangaToUpsert);
+      dataToUpsert.set('_id', new Types.ObjectId());
     }
     dataToUpsert.set('time_updated', Date.now());
     return (await this.dataHandler.upsertItem(dataToUpsert)) as unknown as MangaDataItem;

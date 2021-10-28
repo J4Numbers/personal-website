@@ -12,7 +12,7 @@ export default class AnimeHandler {
     return this.animeDataHandler.findAnimeByRawId(id);
   }
 
-  async lookupAnimeAniListId(id: string): Promise<AnimeDataItem | undefined> {
+  async lookupAnimeAniListId(id: number): Promise<AnimeDataItem | undefined> {
     const foundItems = await this.animeDataHandler.findAnimeShowsByQuery(
       { 'anime_id.ani_list': id }, 0, 1, {});
     if (foundItems.length > 0) {
