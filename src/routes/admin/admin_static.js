@@ -22,16 +22,28 @@
 
 const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
 
-const statics = require('../../lib/StaticDocumentTypes');
+const statics = require('../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
 const { extractStatic } = require('../../journey/admin/statics/misc');
 const viewAllStatics = require('../../journey/admin/statics/view_all_statics');
-const viewSingleTextStaticDocument = require('../../journey/admin/statics/view_static_text_document');
-const viewSingleListContactStaticDocument = require('../../journey/admin/statics/view_static_contact_document');
-const viewSingleListSiteMapStaticDocument = require('../../journey/admin/statics/view_static_sitemap_document');
-const editSingleTextStaticDocument = require('../../journey/admin/statics/view_edit_static_text_document');
-const editSingleListContactStaticDocument = require('../../journey/admin/statics/view_edit_static_contact_document');
-const editSingleListSiteMapStaticDocument = require('../../journey/admin/statics/view_edit_static_sitemap_document');
+const viewSingleTextStaticDocument = require(
+  '../../journey/admin/statics/view_static_text_document',
+);
+const viewSingleListContactStaticDocument = require(
+  '../../journey/admin/statics/view_static_contact_document',
+);
+const viewSingleListSiteMapStaticDocument = require(
+  '../../journey/admin/statics/view_static_sitemap_document',
+);
+const editSingleTextStaticDocument = require(
+  '../../journey/admin/statics/view_edit_static_text_document',
+);
+const editSingleListContactStaticDocument = require(
+  '../../journey/admin/statics/view_edit_static_contact_document',
+);
+const editSingleListSiteMapStaticDocument = require(
+  '../../journey/admin/statics/view_edit_static_sitemap_document',
+);
 const editTextDocument = require('../../journey/admin/statics/edit_static_text_document');
 const editSitemapListDocument = require('../../journey/admin/statics/edit_static_sitemap_document');
 const editContactListDocument = require('../../journey/admin/statics/edit_static_contact_document');

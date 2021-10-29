@@ -24,12 +24,17 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const StaticHandler = require('../../../lib/StaticHandler');
-const staticHandlerInstance = StaticHandler.getHandler();
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
+
+const contactSorter = (a, b) => (
+  // eslint-disable-next-line no-nested-ternary
+  (a.contact_method > b.contact_method)
+    ? 1
+    : ((a.contact_method < [ 'contact_method' ]) ? -1 : 0));
 
 const viewEditSingleListContactStaticDocument = async (req, res, next) => {
   try {
-    const staticData = await staticHandlerInstance.findStatic(res.locals.staticId);
+    const staticData = await staticHandler.getStaticById(res.locals.staticId);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(
@@ -43,7 +48,7 @@ const viewEditSingleListContactStaticDocument = async (req, res, next) => {
 
         content: {
           static_id:     res.locals.staticId,
-          static_detail: (staticData !== null) ? staticData.content : {},
+          static_detail: staticData.content.sort(contactSorter),
         },
 
         head: {

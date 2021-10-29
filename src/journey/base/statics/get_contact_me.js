@@ -24,12 +24,19 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const staticHandlerInstance = require('../../../lib/StaticHandler').getHandler();
-const StaticDocumentTypes = require('../../../lib/StaticDocumentTypes');
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
+const staticTypes = require('../../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
+
+const contactSorter = (a, b) => (
+  // eslint-disable-next-line no-nested-ternary
+  (a.contact_method > b.contact_method)
+    ? 1
+    : ((a.contact_method < [ 'contact_method' ]) ? -1 : 0));
 
 const getContactMe = async (req, res, next) => {
   try {
-    const staticContent = await staticHandlerInstance.findStatic(StaticDocumentTypes.CONTACT_ME);
+    const staticContent = await staticHandler.getStaticById(staticTypes.CONTACT_ME);
+    const sortedStaticContacts = ((staticContent || {}).content || []).sort(contactSorter);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/contact.njk', {
@@ -41,7 +48,7 @@ const getContactMe = async (req, res, next) => {
       },
 
       content: {
-        options: (staticContent || {}).content,
+        options: sortedStaticContacts || [],
       },
 
       head: {

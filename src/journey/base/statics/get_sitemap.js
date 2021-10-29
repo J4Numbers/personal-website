@@ -24,8 +24,8 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const staticHandlerInstance = require('../../../lib/StaticHandler').getHandler();
-const StaticDocumentTypes = require('../../../lib/StaticDocumentTypes');
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
+const staticTypes = require('../../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
 const sitemapSorter = (a, b) => (
   // eslint-disable-next-line no-nested-ternary
@@ -35,8 +35,9 @@ const sitemapSorter = (a, b) => (
 
 const getSitemap = async (req, res, next) => {
   try {
-    const sitemapItems = await staticHandlerInstance.findStatic(StaticDocumentTypes.SITEMAP);
+    const sitemapItems = await staticHandler.getStaticById(staticTypes.SITEMAP);
     const sortedSiteMap = ((sitemapItems || {}).content || []).sort(sitemapSorter);
+
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/sitemap.njk', {

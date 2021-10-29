@@ -25,12 +25,10 @@ const uuid = require('uuid').v4;
 const config = require('config');
 const restify = require('restify');
 
-const loggerEngine = require('./lib/logger');
+const log = require('./js/logger/bunyan_logger').default();
 const routingEngine = require('./routes');
 const onEventHandlers = require('./middleware/on_handlers');
 const preRequestHandlers = require('./middleware/pre_handlers');
-
-const log = loggerEngine.bunyanLogger();
 
 let http2Config;
 if (config.get('app.http2.enabled')) {
