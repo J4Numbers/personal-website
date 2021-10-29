@@ -1,3 +1,6 @@
+import fs from 'fs';
+import config from 'config';
+
 import resolveAnimeDataHandler from '../db/anime';
 import resolveArtDataHandler from '../db/art';
 import resolveBlogDataHandler from '../db/blog';
@@ -14,6 +17,7 @@ import {fetchAniListDataScraper} from '../integration';
 import BlogHandler from './blog-handler';
 import ProjectHandler from './project-handler';
 import StaticHandler from './static-handler';
+import TokenHandler from './token-handler';
 import WritingHandler from './writing-handler';
 
 let animeHandler: AnimeHandler;
@@ -23,6 +27,7 @@ let importHandler: ImportHandler;
 let projectHandler: ProjectHandler;
 let mangaHandler: MangaHandler;
 let staticHandler: StaticHandler;
+let tokenHandler: TokenHandler;
 let writingHandler: WritingHandler;
 
 export function fetchAnimeHandler () {
@@ -74,6 +79,16 @@ export function fetchStaticHandler () {
     staticHandler = new StaticHandler(resolveStaticDataHandler());
   }
   return staticHandler;
+}
+
+export function fetchTokenHandler () {
+  if (tokenHandler === undefined) {
+    tokenHandler = new TokenHandler(
+      fs.readFileSync(config.get('jwt.public_cert')),
+      fs.readFileSync(config.get('jwt.private_key')),
+    );
+  }
+  return tokenHandler;
 }
 
 export function fetchWritingHandler () {

@@ -21,14 +21,14 @@
 // SOFTWARE.
 
 const config = require('config');
-const crypto = require('crypto');
 
-const tokenHandler = require('../../lib/login');
+const adminAuthHandler = require('../../js/auth').fetchAdminAuthHandler();
+const tokenHandler = require('../../js/handlers').fetchTokenHandler();
 
 const adminLoginCompare = async (req, res, next) => {
   if (req.body.admin_password && !(res.nunjucks.logged_in)) {
-    const hash = crypto.createHash('sha256').update(req.body.admin_password).digest('hex');
-    if (hash === config.get('admin.hash')) {
+    const ident = adminAuthHandler.attemptAuthentication({ password: req.body.admin_password });
+    if (ident.success) {
       res.header(
         'Set-Cookie',
         `login-token=${await tokenHandler.generateSignature({ admin: true })}; `

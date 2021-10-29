@@ -21,14 +21,14 @@
 // SOFTWARE.
 
 const config = require('config');
-const crypto = require('crypto');
 
-const tokenHandler = require('../../lib/login');
+const friendlyAuthHandler = require('../../js/auth').fetchFriendAuthHandler();
+const tokenHandler = require('../../js/handlers').fetchTokenHandler();
 
 const friendLoginCompare = async (req, res, next) => {
   if (req.body.me_password && !(res.nunjucks.friendly)) {
-    const hash = crypto.createHash('sha256').update(req.body.me_password).digest('hex');
-    if (hash === config.get('protected.hash')) {
+    const ident = friendlyAuthHandler.attemptAuthentication({ password: req.body.me_password });
+    if (ident.success) {
       res.header(
         'Set-Cookie',
         `login-token=${await tokenHandler.generateSignature({ friendly: true })}; `
