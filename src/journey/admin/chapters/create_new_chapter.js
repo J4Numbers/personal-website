@@ -20,26 +20,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const StoryHandler = require('../../../lib/StoryHandler');
-const storyHandlerInstance = StoryHandler.getHandler();
-
-const ChapterHandler = require('../../../lib/ChapterHandler');
-const chapterHandlerInstance = ChapterHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 // All endpoints below are prefixed with `/admin/stories/:storyId/chapter`
 
 const createNewChapter = async (req, res, next) => {
   try {
-    const uploadedChapter = await chapterHandlerInstance.addNewChapter(
-      req.params.storyId, req.body[ 'chapter-number' ],
-      req.body[ 'chapter-title' ], req.body[ 'chapter-text' ],
-      req.body[ 'chapter-comments' ],
+    const uploadedChapter = await writingHandler.submitChapter({
+      parent_story_id: req.params.storyId,
+      chapter_number: req.body[ 'chapter-number' ],
+      chapter_title: req.body[ 'chapter-title' ],
+      chapter_text: req.body[ 'chapter-text' ],
+      author_notes: req.body[ 'chapter-comments' ],
+      time_posted: new Date(),
+    });
+    res.redirect(
+      303,
+      `/admin/stories/${req.params.storyId}/chapter/${uploadedChapter.chapter_number}`,
+      next,
     );
-    await storyHandlerInstance.addChapterToStory(
-      req.params.storyId, uploadedChapter.chapter_number,
-      uploadedChapter._id,
-    );
-    res.redirect(303, `/admin/stories/${req.params.storyId}`, next);
   } catch (e) {
     req.log.warn(`Creating chapter caused error :: ${e.message}`);
     res.redirect(303, `/admin/stories/${req.params.storyId}/new`, next);

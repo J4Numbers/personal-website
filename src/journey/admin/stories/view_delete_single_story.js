@@ -24,12 +24,11 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const StoryHandler = require('../../../lib/StoryHandler');
-const storyHandlerInstance = StoryHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 const viewDeleteSingleStory = async (req, res, next) => {
   try {
-    const story = await storyHandlerInstance.findStoryByRawId(req.params.storyId);
+    const story = await writingHandler.getStoryById(req.params.storyId);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/stories/admin_story_delete_single.njk', {

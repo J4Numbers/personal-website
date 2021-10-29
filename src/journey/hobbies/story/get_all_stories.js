@@ -23,16 +23,12 @@
 const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
-const storyHandlerInstance = require('../../../lib/StoryHandler').getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 const getAllStories = async (req, res, next) => {
   try {
-    const allStories = await storyHandlerInstance.findAllStories(
-      Math.max(0, ((req.query.page || 1) - 1)) * 12,
-      12,
-      { 'title': 1 },
-    );
-    const storyCount = await storyHandlerInstance.getTotalStoryCount();
+    const allStories = await writingHandler.listStories(req.query.page || 1, 12);
+    const storyCount = await writingHandler.getTotalStoryCount();
 
     let baseUrl = '';
     if (req.query.q) {

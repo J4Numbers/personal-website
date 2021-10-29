@@ -24,16 +24,16 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const storyHandlerInstance = require('../../../lib/StoryHandler').getHandler();
-const chapterHandlerInstance = require('../../../lib/ChapterHandler').getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 const getOneChapter = async (req, res, next) => {
   try {
-    const story = await storyHandlerInstance.findStoryByRawId(req.params.storyId);
-    const chapter = await chapterHandlerInstance.findChapterByStoryAndNumber(
+    const story = await writingHandler.getStoryById(req.params.storyId);
+    const chapter = await writingHandler.getChapterByStoryIdAndChapterNumber(
       req.params.storyId,
       req.params.chapterNumber,
     );
+
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/stories/chapters_one.njk', {
@@ -46,7 +46,7 @@ const getOneChapter = async (req, res, next) => {
 
       content: {
         story,
-        chapter: chapter.pop(),
+        chapter,
       },
 
       head: {

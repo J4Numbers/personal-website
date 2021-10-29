@@ -24,17 +24,14 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const StoryHandler = require('../../../lib/StoryHandler');
-const storyHandlerInstance = StoryHandler.getHandler();
-
-const ChapterHandler = require('../../../lib/ChapterHandler');
-const chapterHandlerInstance = ChapterHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 const viewSingleStory = async (req, res, next) => {
   try {
-    const story = await storyHandlerInstance.findStoryByRawId(req.params.storyId);
-    const sortedChapterList = await chapterHandlerInstance
-      .findChaptersByStory(req.params.storyId, Math.max(0, ((req.query.page || 1) - 1)) * 25, 25);
+    const story = await writingHandler.getStoryById(req.params.storyId);
+    const sortedChapterList = await writingHandler
+      .listChaptersInStory(req.params.storyId, req.query.page || 1, 25);
+
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/stories/admin_story_view_single.njk', {

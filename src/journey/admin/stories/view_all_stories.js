@@ -24,14 +24,13 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const StoryHandler = require('../../../lib/StoryHandler');
-const storyHandlerInstance = StoryHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 const viewAllStories = async (req, res, next) => {
   try {
-    const stories = await storyHandlerInstance
-      .findAllStories(Math.max(0, ((req.query.page || 1) - 1)) * 10, 10, { 'title': 1 });
-    const totalCount = await storyHandlerInstance.getTotalStoryCount();
+    const stories = await writingHandler.listStories(req.query.page || 1, 10);
+    const totalCount = await writingHandler.getTotalStoryCount();
+
     res.send(200, renderer.render('pages/admin/stories/admin_story_view.njk', {
       top_page: {
         title:     'Administrator Toolkit',

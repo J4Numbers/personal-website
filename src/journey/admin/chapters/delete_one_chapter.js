@@ -20,18 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const StoryHandler = require('../../../lib/StoryHandler');
-const storyHandlerInstance = StoryHandler.getHandler();
-
-const ChapterHandler = require('../../../lib/ChapterHandler');
-const chapterHandlerInstance = ChapterHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 // All endpoints below are prefixed with `/admin/stories/:storyId/chapter`
 
 const deleteSingleChapter = async (req, res, next) => {
   try {
-    await chapterHandlerInstance.deleteChapter(req.body[ 'chapter-id' ]);
-    await storyHandlerInstance.removeChapterFromStory(req.params.storyId, req.body[ 'chapter-id' ]);
+    await writingHandler.deleteChapter(req.body[ 'chapter-id' ]);
     res.redirect(303, `/admin/stories/${req.params.storyId}`, next);
   } catch (e) {
     req.log.warn(`Failed to delete chapter :: ${e.message}`);

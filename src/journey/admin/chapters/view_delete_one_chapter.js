@@ -24,15 +24,14 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const ChapterHandler = require('../../../lib/ChapterHandler');
-const chapterHandlerInstance = ChapterHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 // All endpoints below are prefixed with `/admin/stories/:storyId/chapter`
 
 const viewDeleteSingleChapter = async (req, res, next) => {
   try {
-    const chapter = await chapterHandlerInstance
-      .findChapterByStoryAndNumber(req.params.storyId, req.params.chapterNumber);
+    const chapter = await writingHandler
+      .getChapterByStoryIdAndChapterNumber(req.params.storyId, req.params.chapterNumber);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/stories/admin_chapter_delete_single.njk', {
@@ -43,7 +42,7 @@ const viewDeleteSingleChapter = async (req, res, next) => {
       },
 
       content: {
-        chapter: chapter.pop(),
+        chapter,
       },
 
       head: {

@@ -26,7 +26,7 @@ const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
 const artHandler = require('../../../js/handlers').fetchArtHandler();
 const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
-const storyHandler = require('../../../lib/StoryHandler').getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 // TODO: Fix
 const doSearch = async (req, res, next) => {
@@ -61,25 +61,12 @@ const doSearch = async (req, res, next) => {
   try {
     const tagList = renderVars.search.split(/, */u);
 
-    const query = {
-      tags: {
-        $all: tagList,
-      },
-    };
-
     Promise.all([
       animeHandler.lookupAnimeTitle(renderVars.search, tagList),
       artHandler.lookupArtTitles(renderVars.search, tagList),
       blogHandler.lookupBlogs(renderVars.search, tagList),
       mangaHandler.lookupMangaTitle(renderVars.search, tagList),
-      storyHandler.findStoriesByQuery({
-        $or: [ query, {
-          'title': {
-            $regex:   renderVars.search,
-            $options: 'i',
-          },
-        } ],
-      }, 0, 10, { 'title': -1 }),
+      writingHandler.lookupStories(renderVars.search, tagList),
     ])
       .then(async ([ animeItems, artItems, blogItems, mangaItems, storyItems ]) => {
         if (!res.nunjucks.friendly) {
