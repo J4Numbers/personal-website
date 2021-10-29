@@ -24,16 +24,14 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const projectHandlerInstance = require('../../../lib/ProjectHandler').getHandler();
+const projectHandler = require('../../../js/handlers').fetchProjectHandler();
 
 const getAllProjects = async (req, res, next) => {
   try {
-    const allProjects = await projectHandlerInstance.findProjects(
-      Math.max(0, ((req.query.page || 1) - 1)) * 10,
-      10,
-      { 'time_posted': -1 },
+    const allProjects = await projectHandler.listProjects(
+      req.query.page || 1, 12, true,
     );
-    const allProjectCounts = await projectHandlerInstance.getTotalProjectCount();
+    const allProjectCounts = await projectHandler.getTotalProjectCount(true);
 
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');

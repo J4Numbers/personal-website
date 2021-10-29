@@ -24,12 +24,11 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const ProjectHandler = require('../../../lib/ProjectHandler');
-const projectHandlerInstance = ProjectHandler.getHandler();
+const projectHandler = require('../../../js/handlers').fetchProjectHandler();
 
 const viewEditOneProject = async (req, res, next) => {
   try {
-    const project = await projectHandlerInstance.findProject(req.params.projectId);
+    const project = await projectHandler.getProjectById(req.params.projectId);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/projects/admin_project_edit_single.njk', {
