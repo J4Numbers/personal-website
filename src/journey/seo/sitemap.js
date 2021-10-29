@@ -23,8 +23,8 @@
 const config = require('config');
 const errors = require('restify-errors');
 
-const staticHandlerInstance = require('../../lib/StaticHandler').getHandler();
-const StaticDocumentTypes = require('../../lib/StaticDocumentTypes');
+const staticHandler = require('../../js/handlers').fetchStaticHandler();
+const staticTypes = require('../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
 const sitemapSorter = (a, b) => (
   // eslint-disable-next-line no-nested-ternary
@@ -38,7 +38,7 @@ const displaySitemap = async (req, res, next) => {
       config.get('app.http2.enabled') ? 'https' : 'http'
     }://${config.get('app.hostname')}:${config.get('app.port')}`;
 
-    const sitemapItems = await staticHandlerInstance.findStatic(StaticDocumentTypes.SITEMAP);
+    const sitemapItems = await staticHandler.getStaticById(staticTypes.SITEMAP);
     const sortedSiteMap = ((sitemapItems || {}).content || []).sort(sitemapSorter);
     const sitemapText = sortedSiteMap.reduce(
       (ongoing, current) => `${ongoing}${baseLink}${current.page_link}\n`,

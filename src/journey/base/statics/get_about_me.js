@@ -24,12 +24,12 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const staticHandlerInstance = require('../../../lib/StaticHandler').getHandler();
-const StaticDocumentTypes = require('../../../lib/StaticDocumentTypes');
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
+const staticTypes = require('../../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
 const getAboutMe = async (req, res, next) => {
   try {
-    const staticContent = await staticHandlerInstance.findStatic(StaticDocumentTypes.ABOUT_ME);
+    const staticContent = await staticHandler.getStaticById(staticTypes.ABOUT_ME);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/about.njk', {

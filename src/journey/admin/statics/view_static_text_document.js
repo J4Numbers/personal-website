@@ -24,12 +24,11 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const StaticHandler = require('../../../lib/StaticHandler');
-const staticHandlerInstance = StaticHandler.getHandler();
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
 
 const viewSingleTextStaticDocument = async (req, res, next) => {
   try {
-    const staticData = staticHandlerInstance.findStatic(res.locals.staticId);
+    const staticData = await staticHandler.getStaticById(res.locals.staticId);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/statics/admin_statics_view_single_text.njk', {
@@ -41,7 +40,7 @@ const viewSingleTextStaticDocument = async (req, res, next) => {
 
       content: {
         static_id:     res.locals.staticId,
-        static_detail: (staticData !== null) ? staticData.content : '',
+        static_detail: staticData.content,
       },
 
       head: {

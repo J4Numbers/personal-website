@@ -26,12 +26,12 @@ const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
 const markdown = require('markdown-it')();
 
-const staticHandlerInstance = require('../../../lib/StaticHandler').getHandler();
-const StaticDocumentTypes = require('../../../lib/StaticDocumentTypes');
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
+const staticTypes = require('../../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
 const generateOverview = async (req, res, next) => {
   try {
-    const staticContent = await staticHandlerInstance.findStatic(StaticDocumentTypes.KNOWING_ME);
+    const staticContent = await staticHandler.getStaticById(staticTypes.KNOWING_ME);
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/me/me_index.njk', {
