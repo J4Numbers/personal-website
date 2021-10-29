@@ -1,9 +1,11 @@
 import resolveAnimeDataHandler from '../db/anime';
 import resolveArtDataHandler from '../db/art';
 import resolveBlogDataHandler from '../db/blog';
+import resolveChapterDataHandler from '../db/chapter';
 import resolveProjectDataHandler from '../db/project';
 import resolveMangaDataHandler from '../db/manga';
 import resolveStaticDataHandler from '../db/static';
+import resolveStoryDataHandler from '../db/story';
 import AnimeHandler from './anime-handler';
 import ArtHandler from './art-handler';
 import MangaHandler from './manga-handler';
@@ -12,6 +14,7 @@ import {fetchAniListDataScraper} from '../integration';
 import BlogHandler from './blog-handler';
 import ProjectHandler from './project-handler';
 import StaticHandler from './static-handler';
+import WritingHandler from './writing-handler';
 
 let animeHandler: AnimeHandler;
 let artHandler: ArtHandler;
@@ -20,6 +23,7 @@ let importHandler: ImportHandler;
 let projectHandler: ProjectHandler;
 let mangaHandler: MangaHandler;
 let staticHandler: StaticHandler;
+let writingHandler: WritingHandler;
 
 export function fetchAnimeHandler () {
   if (animeHandler === undefined) {
@@ -70,4 +74,13 @@ export function fetchStaticHandler () {
     staticHandler = new StaticHandler(resolveStaticDataHandler());
   }
   return staticHandler;
+}
+
+export function fetchWritingHandler () {
+  if (writingHandler === undefined) {
+    writingHandler = new WritingHandler(
+      resolveStoryDataHandler(), resolveChapterDataHandler(),
+    );
+  }
+  return writingHandler;
 }

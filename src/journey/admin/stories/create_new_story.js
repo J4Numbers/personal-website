@@ -21,23 +21,31 @@
 // SOFTWARE.
 
 const fs = require('fs');
+const sharp = require('sharp');
 
-const StoryHandler = require('../../../lib/StoryHandler');
-const storyHandlerInstance = StoryHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 const createNewStory = async (req, res, next) => {
   try {
-    let imageAsBase64 = '';
-    if (typeof req.files[ 'story-image' ] !== 'undefined') {
+    const submission = {
+      title: req.body[ 'story-title' ],
+      story_status: req.body[ 'story-status' ],
+      story_type: req.body[ 'story-type' ],
+      synopsis: req.body[ 'story-synopsis' ],
+      meta_review: req.body[ 'story-notes' ],
+      tags: req.body[ 'story-tags' ]
+        .split(/, ?/u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+    };
+    if (typeof req.files[ 'story-image' ] !== 'undefined' && req.files[ 'story-image' ].size > 0) {
       req.log.info(`Reading in new image from ${req.files[ 'story-image' ].path}`);
-      imageAsBase64 = fs.readFileSync(req.files[ 'story-image' ].path, 'base64');
+      const thumbPromise = await sharp(fs.readFileSync(req.files[ 'story-image' ].path))
+        .resize({ width: 200 })
+        .toBuffer();
+      submission.cover_img = thumbPromise.toString('base64');
     }
-    const savedStory = await storyHandlerInstance.addNewStory(
-      req.body[ 'story-title' ], req.body[ 'story-status' ], req.body[ 'story-type' ],
-      req.body[ 'story-synopsis' ], imageAsBase64,
-      req.body[ 'story-tags' ].split(/, ?/u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-      req.body[ 'story-notes' ],
-    );
+    const savedStory = await writingHandler.submitStory(submission);
     res.redirect(303, `/admin/stories/${savedStory._id}`, next);
   } catch (e) {
     req.log.warn(`Issue found when creating new story :: ${e.message}`);
