@@ -1,5 +1,5 @@
 import BasicDataItem from './BasicDataItem';
-import {BlogCommentDataItem} from './BlogCommentDataItem';
+import {CommentDataItem} from './CommentDataItem';
 
 export interface BlogDataItem extends BasicDataItem{
   'short_title':  string,
@@ -9,5 +9,5 @@ export interface BlogDataItem extends BasicDataItem{
   'time_posted':  Date,
   'time_updated': Date,
   'tags':         Array<String>,
-  'comments':     Array<BlogCommentDataItem>,
+  'comments':     Array<CommentDataItem>,
 }

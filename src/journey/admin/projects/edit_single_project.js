@@ -20,16 +20,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const ProjectHandler = require('../../../lib/ProjectHandler');
-const projectHandlerInstance = ProjectHandler.getHandler();
+const projectHandler = require('../../../js/handlers').fetchProjectHandler();
 
 const editSingleProject = async (req, res, next) => {
   try {
-    await projectHandlerInstance.editProject(
-      req.params.projectId, req.body[ 'project-title' ],
-      req.body[ 'project-text' ], req.body[ 'project-visible' ] === 'Y',
-      req.body[ 'project-tags' ].split(/, */u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-    );
+    await projectHandler.submitProject({
+      _id: req.params.projectId,
+      long_title: req.body[ 'project-title' ],
+      short_title: req.body[ 'project-title' ]
+        .replace(/ /gu, '-')
+        .replace(/\p{Z}/gu, '')
+        .toLocaleLowerCase(),
+      description: req.body[ 'project-text' ],
+      public: req.body[ 'project-visible' ] === 'Y',
+      tags: req.body[ 'project-tags' ]
+        .split(/, */u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+    });
     res.redirect(303, `/admin/projects/${req.params.projectId}`, next);
   } catch (e) {
     req.log.warn(`Issue found when trying to edit project :: ${e.message}`);

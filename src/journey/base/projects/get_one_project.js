@@ -23,11 +23,11 @@
 const errors = require('restify-errors');
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const projectHandlerInstance = require('../../../lib/ProjectHandler').getHandler();
+const projectHandler = require('../../../js/handlers').fetchProjectHandler();
 
 const getOneProject = async (req, res, next) => {
   try {
-    const project = await projectHandlerInstance.findProject(req.params.projectId);
+    const project = await projectHandler.getProjectById(req.params.projectId);
     if (project !== null) {
       res.contentType = 'text/html';
       res.header('content-type', 'text/html');
