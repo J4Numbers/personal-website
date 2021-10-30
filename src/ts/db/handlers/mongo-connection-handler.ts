@@ -1,62 +1,69 @@
-import {
+import type {
   Connection,
   Model,
   Schema,
-  createConnection,
   FilterQuery,
-  Document, EnforceDocument
+  Document, EnforceDocument,
 } from 'mongoose';
-import BasicDataItem from '../../objects/BasicDataItem';
-import bunyan_logger from '../../logger/bunyan_logger';
+import {
+  createConnection,
+} from 'mongoose';
+import type BasicDataItem from '../../objects/BasicDataItem';
+import bunyanLogger from '../../logger/bunyan-logger';
 
-const logger = bunyan_logger();
+const logger = bunyanLogger();
 
 export default class MongoConnectionHandler<T extends BasicDataItem> {
-  connection: Connection;
+  private readonly connection: Connection;
 
-  constructor (uri: string) {
+  public constructor (uri: string) {
     this.connection = createConnection(uri, {});
   }
 
-  bootModel (modelName: string, model: Schema<T>): Model<T> {
+  public bootModel (modelName: string, model: Schema<T>): Model<T> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.connection.model(modelName, model);
   }
 
-  async findById (model: Model<T>, id: string): Promise<EnforceDocument<T, any, any> | null> {
+  public async findById (
+    model: Model<T>, id: string,
+  ): Promise<EnforceDocument<T, any, any> | null> {
     try {
       return await model.findById(id);
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn((e as Error).message);
       throw e;
     }
   }
 
-  async findOrCreate (model: Model<T>, id: string): Promise<T> {
+  public async findOrCreate (model: Model<T>, id: string): Promise<T> {
     try {
       return await model.findOneAndUpdate(
-        // @ts-ignore
+        // @ts-expect-error Meddling with Mongo differences between spec and reality.
         { '_id': id },
         {},
         { upsert: true,
           new:    true },
       );
-    } catch (err) {
+    } catch (err: unknown) {
       logger.warn((err as Error).message);
       throw err;
     }
   }
 
-  async deleteById (model: Model<T>, id: string): Promise<void> {
+  public async deleteById (model: Model<T>, id: string): Promise<void> {
     try {
-      // @ts-ignore
+      // @ts-expect-error Meddling with Mongo differences between spec and reality.
       await model.deleteOne({ '_id': id });
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn((e as Error).message);
       throw e;
     }
   }
 
-  async findFromQuery (model: Model<T>, query: FilterQuery<T>, skip: number, limit: number, sort: any): Promise<Array<T>> {
+  public async findFromQuery (
+    model: Model<T>, query: FilterQuery<T>, skip: number, limit: number, sort: any,
+  ): Promise<Array<T>> {
     try {
       return await model.find(
         query,
@@ -65,25 +72,25 @@ export default class MongoConnectionHandler<T extends BasicDataItem> {
           limit,
           sort },
       );
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn((e as Error).message);
       throw e;
     }
   }
 
-  async getTotalCountFromQuery (model: Model<T>, query: FilterQuery<T>): Promise<number> {
+  public async getTotalCountFromQuery (model: Model<T>, query: FilterQuery<T>): Promise<number> {
     try {
       return await model.countDocuments(query);
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn((e as Error).message);
       throw e;
     }
   }
 
-  async upsertItem (itemToSave: Document<T>): Promise<Document<T>> {
+  public async upsertItem (itemToSave: Document<T>): Promise<Document<T>> {
     try {
       return await itemToSave.save();
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn((e as Error).message);
       throw e;
     }

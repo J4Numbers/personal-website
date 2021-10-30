@@ -1,5 +1,5 @@
 export interface PasswordAuthentication {
-  password: string,
+  password: string;
 }
 
 export type AuthenticationDetails = PasswordAuthentication;

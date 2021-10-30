@@ -1,16 +1,20 @@
-import {QueryOptions, SortValues} from 'mongoose';
-import {StoryDataItem} from '../../objects/StoryDataItem';
+import type { QueryOptions, SortValues } from 'mongoose';
+import type { StoryDataItem } from '../../objects/StoryDataItem';
 
 export default abstract class StandardStoryDataHandler {
-  abstract findStoryByRawId (rawId: string): Promise<StoryDataItem>;
+  public abstract findStoryByRawId (rawId: string): Promise<StoryDataItem>;
 
-  abstract findAllStories (skip: number, limit: number, sort: { [key: string]: SortValues }): Promise<Array<StoryDataItem>>;
+  public abstract findAllStories (
+    skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<StoryDataItem>>;
 
-  abstract findStoriesByQuery (query: QueryOptions, skip: number, limit: number, sort: { [key: string]: SortValues }): Promise<Array<StoryDataItem>>;
+  public abstract findStoriesByQuery (
+    query: QueryOptions, skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<StoryDataItem>>;
 
-  abstract getTotalStoryCount (): Promise<number>;
+  public abstract getTotalStoryCount (): Promise<number>;
 
-  abstract upsertStory (storyToUpsert: StoryDataItem): Promise<StoryDataItem>;
+  public abstract upsertStory (storyToUpsert: StoryDataItem): Promise<StoryDataItem>;
 
-  abstract deleteStoryById (storyIdToRemove: string): Promise<StoryDataItem>;
+  public abstract deleteStoryById (storyIdToRemove: string): Promise<StoryDataItem>;
 }

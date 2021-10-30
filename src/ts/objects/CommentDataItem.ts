@@ -1,7 +1,7 @@
-import BasicDataItem from './BasicDataItem';
+import type BasicDataItem from './BasicDataItem';
 
 export interface CommentDataItem extends BasicDataItem{
-  'comment': string,
-  'author': string,
-  'time_posted': Date,
+  'comment': string;
+  'author': string;
+  'time_posted': Date;
 }

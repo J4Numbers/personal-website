@@ -13,45 +13,45 @@ import AnimeHandler from './anime-handler';
 import ArtHandler from './art-handler';
 import MangaHandler from './manga-handler';
 import ImportHandler from './import-handler';
-import {fetchAniListDataScraper} from '../integration';
+import { fetchAniListDataScraper } from '../integration';
 import BlogHandler from './blog-handler';
 import ProjectHandler from './project-handler';
 import StaticHandler from './static-handler';
 import TokenHandler from './token-handler';
 import WritingHandler from './writing-handler';
 
-let animeHandler: AnimeHandler;
-let artHandler: ArtHandler;
-let blogHandler: BlogHandler;
-let importHandler: ImportHandler;
-let projectHandler: ProjectHandler;
-let mangaHandler: MangaHandler;
-let staticHandler: StaticHandler;
-let tokenHandler: TokenHandler;
-let writingHandler: WritingHandler;
+let animeHandler: AnimeHandler | undefined;
+let artHandler: ArtHandler | undefined;
+let blogHandler: BlogHandler | undefined;
+let importHandler: ImportHandler | undefined;
+let projectHandler: ProjectHandler | undefined;
+let mangaHandler: MangaHandler | undefined;
+let staticHandler: StaticHandler | undefined;
+let tokenHandler: TokenHandler | undefined;
+let writingHandler: WritingHandler | undefined;
 
-export function fetchAnimeHandler () {
+export function fetchAnimeHandler (): AnimeHandler {
   if (animeHandler === undefined) {
     animeHandler = new AnimeHandler(resolveAnimeDataHandler());
   }
   return animeHandler;
 }
 
-export function fetchArtHandler () {
+export function fetchArtHandler (): ArtHandler {
   if (artHandler === undefined) {
     artHandler = new ArtHandler(resolveArtDataHandler());
   }
   return artHandler;
 }
 
-export function fetchBlogHandler () {
+export function fetchBlogHandler (): BlogHandler {
   if (blogHandler === undefined) {
     blogHandler = new BlogHandler(resolveBlogDataHandler());
   }
   return blogHandler;
 }
 
-export function fetchImportHandler () {
+export function fetchImportHandler (): ImportHandler {
   if (importHandler === undefined) {
     importHandler = new ImportHandler(
       fetchAniListDataScraper(), fetchAnimeHandler(), fetchMangaHandler(),
@@ -60,28 +60,28 @@ export function fetchImportHandler () {
   return importHandler;
 }
 
-export function fetchProjectHandler () {
+export function fetchProjectHandler (): ProjectHandler {
   if (projectHandler === undefined) {
     projectHandler = new ProjectHandler(resolveProjectDataHandler());
   }
   return projectHandler;
 }
 
-export function fetchMangaHandler () {
+export function fetchMangaHandler (): MangaHandler {
   if (mangaHandler === undefined) {
     mangaHandler = new MangaHandler(resolveMangaDataHandler());
   }
   return mangaHandler;
 }
 
-export function fetchStaticHandler () {
+export function fetchStaticHandler (): StaticHandler {
   if (staticHandler === undefined) {
     staticHandler = new StaticHandler(resolveStaticDataHandler());
   }
   return staticHandler;
 }
 
-export function fetchTokenHandler () {
+export function fetchTokenHandler (): TokenHandler {
   if (tokenHandler === undefined) {
     tokenHandler = new TokenHandler(
       fs.readFileSync(config.get('jwt.public_cert')),
@@ -91,7 +91,7 @@ export function fetchTokenHandler () {
   return tokenHandler;
 }
 
-export function fetchWritingHandler () {
+export function fetchWritingHandler (): WritingHandler {
   if (writingHandler === undefined) {
     writingHandler = new WritingHandler(
       resolveStoryDataHandler(), resolveChapterDataHandler(),

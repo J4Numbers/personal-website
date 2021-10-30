@@ -7,16 +7,16 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "clean": "gulp clean",
+    "clean": "./node_modules/.bin/gulp clean",
     "build": "npm run clean && npm run build:gulp",
-    "build:gulp": "gulp build",
+    "build:gulp": "./node_modules/.bin/gulp build",
     "cover": "npm run cover:unit",
-    "cover:unit": "nyc --nycrc-path nyc.js.config.js check-coverage",
+    "cover:unit": "./node_modules/.bin/nyc --nycrc-path nyc.js.config.js check-coverage",
     "generate-certs": "openssl req -x509 -newkey rsa:2048 -days 365 -nodes -sha256 -subj '/CN=localhost' -keyout certs/localhost-privkey.pem -out certs/localhost-cert.pem",
-    "quality:eslint": "./node_modules/.bin/eslint -c .eslintrc.js .",
+    "quality:eslint": "./node_modules/.bin/eslint -c .eslintrc.js . --ext .js,.ts",
     "start": "node ./src/app",
     "test": "npm run quality:eslint && npm run test:unit",
-    "test:unit": "nyc --nycrc-path nyc.js.config.js mocha --config test/.mocharc.js --check-leaks"
+    "test:unit": "./node_modules/.bin/nyc --nycrc-path nyc.js.config.js mocha --config test/.mocharc.js --check-leaks"
   },
   "repository": {
     "type": "git",

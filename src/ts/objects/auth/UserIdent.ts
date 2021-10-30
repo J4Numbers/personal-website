@@ -1,3 +1,3 @@
 export interface UserIdent {
-  success: boolean
+  success: boolean;
 }
