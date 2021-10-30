@@ -1,17 +1,19 @@
 import fs from 'fs';
 import path from 'path';
-import axios, {AxiosPromise} from 'axios';
+import type { AxiosPromise } from 'axios';
+import axios from 'axios';
 
-import {AniListMediaTypes} from '../objects/anilist/AniListMediaTypes';
-import bunyan_logger from '../logger/bunyan_logger';
-import {AniListResponse} from '../objects/anilist/AniListResponse';
-const logger = bunyan_logger();
+import { AniListMediaTypes } from '../objects/anilist/AniListMediaTypes';
+import bunyanLogger from '../logger/bunyan-logger';
+import type { AniListResponse } from '../objects/anilist/AniListResponse';
+const logger = bunyanLogger();
 
 export default class AniListDataScraper {
   private readonly aniListAnimeQuery: string;
+
   private readonly aniListMangaQuery: string;
 
-  constructor () {
+  public constructor () {
     this.aniListAnimeQuery = fs.readFileSync(
       path.join(__dirname, '../../', 'gql', 'animeAniList.gql'),
       { encoding: 'utf-8' },
@@ -22,19 +24,23 @@ export default class AniListDataScraper {
     );
   }
 
-  async performRequest (body: { query: any, variables: any }): Promise<AxiosPromise<AniListResponse>> {
+  private static async performRequest (
+    body: { query: any; variables: any },
+  ): Promise<AxiosPromise<AniListResponse>> {
     return axios({
       url:     'https://graphql.anilist.co',
       method:  'POST',
       headers: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'Content-Type': 'application/json',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'Accept':       'application/json',
       },
       data: body,
     });
   }
 
-  async getPageOfAniListAnimeResults (page = 0): Promise<AxiosPromise<AniListResponse>> {
+  public async getPageOfAniListAnimeResults (page = 0): Promise<AxiosPromise<AniListResponse>> {
     try {
       const query = this.aniListAnimeQuery;
       const variables = {
@@ -42,17 +48,17 @@ export default class AniListDataScraper {
         mediaType: AniListMediaTypes.ANIME,
       };
 
-      return await this.performRequest({
+      return await AniListDataScraper.performRequest({
         query,
         variables,
       });
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn(`Unhandled exception when requesting aniList data :: ${(e as Error).message}`);
       throw e;
     }
   }
 
-  async getPageOfAniListMangaResults (page = 0): Promise<AxiosPromise<AniListResponse>> {
+  public async getPageOfAniListMangaResults (page = 0): Promise<AxiosPromise<AniListResponse>> {
     try {
       const query = this.aniListMangaQuery;
       const variables = {
@@ -60,11 +66,11 @@ export default class AniListDataScraper {
         mediaType: AniListMediaTypes.MANGA,
       };
 
-      return await this.performRequest({
+      return await AniListDataScraper.performRequest({
         query,
         variables,
       });
-    } catch (e) {
+    } catch (e: unknown) {
       logger.warn(`Unhandled exception when requesting aniList data :: ${(e as Error).message}`);
       throw e;
     }

@@ -1,7 +1,9 @@
-import Logger, {createLogger, Stream} from 'bunyan';
+import type { Stream } from 'bunyan';
+import type Logger from 'bunyan';
+import { createLogger } from 'bunyan';
 import config from 'config';
 
-let logger: Logger
+let logger: Logger | undefined;
 
 const generateLogger = (): Logger => {
   const loggingStreams: Array<Stream> = [

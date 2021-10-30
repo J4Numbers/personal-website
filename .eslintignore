@@ -3,6 +3,7 @@ config/local*
 data/
 public/
 src/gql
+src/javascript/
 src/js/
 src/images/
 src/stylesheets/

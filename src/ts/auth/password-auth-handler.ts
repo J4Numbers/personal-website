@@ -1,20 +1,19 @@
 import StandardAuthHandler from './standard-auth-handler';
-import {AuthenticationDetails, PasswordAuthentication} from '../objects/auth/AuthenticationDetails';
-import {UserIdent} from '../objects/auth/UserIdent';
+import type { AuthenticationDetails } from '../objects/auth/AuthenticationDetails';
+import type { UserIdent } from '../objects/auth/UserIdent';
 import crypto from 'crypto';
 
 export default class PasswordAuthHandler extends StandardAuthHandler {
   private readonly basePasswordHash: string;
 
-  constructor(passwordHash: string) {
+  public constructor (passwordHash: string) {
     super();
     this.basePasswordHash = passwordHash;
   }
 
-  attemptAuthentication(authDetails: AuthenticationDetails): UserIdent {
-    const passAuthDetails = authDetails as PasswordAuthentication;
+  public attemptAuthentication (authDetails: AuthenticationDetails): UserIdent {
     const hash = crypto.createHash('sha256')
-      .update(passAuthDetails.password)
+      .update(authDetails.password)
       .digest('hex');
     return {
       success: hash === this.basePasswordHash,

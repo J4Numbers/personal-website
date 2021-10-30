@@ -1,4 +1,4 @@
 export enum AniListMediaTypes {
-  ANIME="ANIME",
-  MANGA="MANGA",
+  ANIME = 'ANIME',
+  MANGA = 'MANGA',
 }
