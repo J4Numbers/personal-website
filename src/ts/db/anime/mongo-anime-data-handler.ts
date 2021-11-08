@@ -1,14 +1,18 @@
 import StandardAnimeDataHandler from './standard-anime-data-handler';
-import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {AnimeDataItem, AnimeStatus} from '../../objects/AnimeDataItem';
-import {Model, Schema, Date, SortValues, QueryOptions, Document, Types} from 'mongoose';
+import type MongoConnectionHandler from '../handlers/mongo-connection-handler';
+import type { AnimeDataItem } from '../../objects/AnimeDataItem';
+import { AnimeStatus } from '../../objects/AnimeDataItem';
+import type { Model, SortValues, QueryOptions, Document } from 'mongoose';
+import { Schema, Date, Types } from 'mongoose';
 
 export default class MongoAnimeDataHandler extends StandardAnimeDataHandler {
-  dataHandler: MongoConnectionHandler<AnimeDataItem>;
-  dataSchema: Schema<AnimeDataItem>;
-  dataModel: Model<AnimeDataItem>;
+  private readonly dataHandler: MongoConnectionHandler<AnimeDataItem>;
 
-  constructor(dataHandler: MongoConnectionHandler<AnimeDataItem>) {
+  private readonly dataSchema: Schema<AnimeDataItem>;
+
+  private readonly dataModel: Model<AnimeDataItem>;
+
+  public constructor (dataHandler: MongoConnectionHandler<AnimeDataItem>) {
     super();
     this.dataHandler = dataHandler;
     this.dataSchema = new Schema({
@@ -44,11 +48,7 @@ export default class MongoAnimeDataHandler extends StandardAnimeDataHandler {
     this.dataModel = this.dataHandler.bootModel('AnimeShow', this.dataSchema);
   }
 
-  async findAnimeByRawId(rawId: string): Promise<AnimeDataItem> {
-    return this.dataHandler.findById(this.dataModel, rawId);
-  }
-
-  buildQuery (status = ''): QueryOptions {
+  private static buildQuery (status = ''): QueryOptions {
     const query: QueryOptions = {};
     if (status !== 'all') {
       if (status === 'seen') {
@@ -73,21 +73,29 @@ export default class MongoAnimeDataHandler extends StandardAnimeDataHandler {
     return query;
   }
 
-  async findAnimeShows(skip: number, limit: number, sort: { [p: string]: SortValues }, category: string): Promise<Array<AnimeDataItem>> {
-    return this.dataHandler
-      .findFromQuery(this.dataModel, this.buildQuery(category), skip, limit, sort);
+  public async findAnimeByRawId (rawId: string): Promise<AnimeDataItem> {
+    return this.dataHandler.findById(this.dataModel, rawId);
   }
 
-  async findAnimeShowsByQuery(query: QueryOptions, skip: number, limit: number, sort: { [p: string]: SortValues }): Promise<Array<AnimeDataItem>> {
+  public async findAnimeShows (
+    skip: number, limit: number, sort: Record<string, SortValues>, category: string,
+  ): Promise<Array<AnimeDataItem>> {
+    return this.dataHandler
+      .findFromQuery(this.dataModel, MongoAnimeDataHandler.buildQuery(category), skip, limit, sort);
+  }
+
+  public async findAnimeShowsByQuery (
+    query: QueryOptions, skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<AnimeDataItem>> {
     return this.dataHandler.findFromQuery(this.dataModel, query, skip, limit, sort);
   }
 
-  async getTotalShowCount(category: string): Promise<number> {
+  public async getTotalShowCount (category: string): Promise<number> {
     return this.dataHandler
-      .getTotalCountFromQuery(this.dataModel, this.buildQuery(category));
+      .getTotalCountFromQuery(this.dataModel, MongoAnimeDataHandler.buildQuery(category));
   }
 
-  async upsertAnime(animeToUpsert: AnimeDataItem): Promise<AnimeDataItem> {
+  public async upsertAnime (animeToUpsert: AnimeDataItem): Promise<AnimeDataItem> {
     let dataToUpsert: Document<AnimeDataItem>;
     if (animeToUpsert._id !== undefined) {
       dataToUpsert = await this.dataHandler.findById(this.dataModel, animeToUpsert._id);

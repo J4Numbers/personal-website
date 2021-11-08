@@ -1,18 +1,17 @@
 import config from 'config';
 import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import StandardProjectDataHandler from './standard-project-data-handler';
+import type StandardProjectDataHandler from './standard-project-data-handler';
 import MongoProjectDataHandler from './mongo-project-data-handler';
-import {BlogDataItem} from '../../objects/BlogDataItem';
-import {ProjectDataItem} from '../../objects/ProjectDataItem';
+import type { ProjectDataItem } from '../../objects/ProjectDataItem';
 
-let projectDataHandler: StandardProjectDataHandler;
+let projectDataHandler: StandardProjectDataHandler | undefined;
 
-const initialiseDataHandler = () => {
+const initialiseDataHandler = (): StandardProjectDataHandler => {
   const connectionHandler = new MongoConnectionHandler<ProjectDataItem>(config.get('database.uri'));
   return new MongoProjectDataHandler(connectionHandler);
 };
 
-export default () => {
+export default (): StandardProjectDataHandler => {
   if (projectDataHandler === undefined) {
     projectDataHandler = initialiseDataHandler();
   }

@@ -1,15 +1,17 @@
 import StandardProjectDataHandler from './standard-project-data-handler';
-import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {Date, Document, Model, QueryOptions, Schema, SortValues, Types} from 'mongoose';
-import {BlogDataItem} from '../../objects/BlogDataItem';
-import {ProjectDataItem} from '../../objects/ProjectDataItem';
+import type MongoConnectionHandler from '../handlers/mongo-connection-handler';
+import type { Document, Model, QueryOptions, SortValues } from 'mongoose';
+import { Date, Schema, Types } from 'mongoose';
+import type { ProjectDataItem } from '../../objects/ProjectDataItem';
 
 export default class MongoProjectDataHandler extends StandardProjectDataHandler {
-  dataHandler: MongoConnectionHandler<ProjectDataItem>;
-  dataSchema: Schema<ProjectDataItem>;
-  dataModel: Model<ProjectDataItem>;
+  private readonly dataHandler: MongoConnectionHandler<ProjectDataItem>;
 
-  constructor(dataHandler: MongoConnectionHandler<ProjectDataItem>) {
+  private readonly dataSchema: Schema<ProjectDataItem>;
+
+  private readonly dataModel: Model<ProjectDataItem>;
+
+  public constructor (dataHandler: MongoConnectionHandler<ProjectDataItem>) {
     super();
     this.dataHandler = dataHandler;
     this.dataSchema = new Schema({
@@ -32,13 +34,7 @@ export default class MongoProjectDataHandler extends StandardProjectDataHandler 
     this.dataModel = this.dataHandler.bootModel('DevProject', this.dataSchema);
   }
 
-  async deleteProjectById(projectIdToRemove: string): Promise<ProjectDataItem> {
-    const projectToDelete = await this.findProjectByRawId(projectIdToRemove);
-    await this.dataModel.deleteOne({'_id': projectIdToRemove});
-    return projectToDelete;
-  }
-
-  static buildQuery (visible = false): QueryOptions {
+  private static buildQuery (visible = false): QueryOptions {
     const query: QueryOptions = {};
     if (visible) {
       query.public = true;
@@ -46,24 +42,40 @@ export default class MongoProjectDataHandler extends StandardProjectDataHandler 
     return query;
   }
 
-  findAllProjects(skip: number, limit: number, sort: { [p: string]: SortValues }, visible: boolean): Promise<Array<ProjectDataItem>> {
-    return this.dataHandler
-      .findFromQuery(this.dataModel, MongoProjectDataHandler.buildQuery(visible), skip, limit, sort);
+  public async deleteProjectById (projectIdToRemove: string): Promise<ProjectDataItem> {
+    const projectToDelete = await this.findProjectByRawId(projectIdToRemove);
+    await this.dataModel.deleteOne({ '_id': projectIdToRemove });
+    return projectToDelete;
   }
 
-  findProjectByRawId(rawId: string): Promise<ProjectDataItem> {
+  public async findAllProjects (
+    skip: number, limit: number, sort: Record<string, SortValues>, visible: boolean,
+  ): Promise<Array<ProjectDataItem>> {
+    return this.dataHandler
+      .findFromQuery(
+        this.dataModel,
+        MongoProjectDataHandler.buildQuery(visible),
+        skip, limit, sort,
+      );
+  }
+
+  public async findProjectByRawId (rawId: string): Promise<ProjectDataItem> {
     return this.dataHandler.findById(this.dataModel, rawId);
   }
 
-  findProjectsByQuery(query: QueryOptions, skip: number, limit: number, sort: { [p: string]: SortValues }): Promise<Array<ProjectDataItem>> {
+  public async findProjectsByQuery (
+    query: QueryOptions, skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<ProjectDataItem>> {
     return this.dataHandler.findFromQuery(this.dataModel, query, skip, limit, sort);
   }
 
-  getTotalProjectCount(visible: boolean): Promise<number> {
-    return this.dataHandler.getTotalCountFromQuery(this.dataModel, MongoProjectDataHandler.buildQuery(visible));
+  public async getTotalProjectCount (visible: boolean): Promise<number> {
+    return this.dataHandler.getTotalCountFromQuery(
+      this.dataModel, MongoProjectDataHandler.buildQuery(visible),
+    );
   }
 
-  async upsertProject(projectToUpsert: ProjectDataItem): Promise<ProjectDataItem> {
+  public async upsertProject (projectToUpsert: ProjectDataItem): Promise<ProjectDataItem> {
     let dataToUpsert: Document<ProjectDataItem>;
     if (projectToUpsert._id !== undefined) {
       dataToUpsert = await this.dataHandler.findById(this.dataModel, projectToUpsert._id);
@@ -79,5 +91,4 @@ export default class MongoProjectDataHandler extends StandardProjectDataHandler 
     dataToUpsert.set('time_updated', Date.now());
     return (await this.dataHandler.upsertItem(dataToUpsert)) as unknown as ProjectDataItem;
   }
-
 }

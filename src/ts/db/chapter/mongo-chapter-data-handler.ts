@@ -1,14 +1,17 @@
 import StandardChapterDataHandler from './standard-chapter-data-handler';
-import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {Date, Document, Model, QueryOptions, Schema, SortValues, Types} from 'mongoose';
-import {ChapterDataItem} from '../../objects/ChapterDataItem';
+import type MongoConnectionHandler from '../handlers/mongo-connection-handler';
+import type { Document, Model, QueryOptions, SortValues } from 'mongoose';
+import { Date, Schema, Types } from 'mongoose';
+import type { ChapterDataItem } from '../../objects/ChapterDataItem';
 
 export default class MongoChapterDataHandler extends StandardChapterDataHandler {
-  dataHandler: MongoConnectionHandler<ChapterDataItem>;
-  dataSchema: Schema<ChapterDataItem>;
-  dataModel: Model<ChapterDataItem>;
+  private readonly dataHandler: MongoConnectionHandler<ChapterDataItem>;
 
-  constructor(dataHandler: MongoConnectionHandler<ChapterDataItem>) {
+  private readonly dataSchema: Schema<ChapterDataItem>;
+
+  private readonly dataModel: Model<ChapterDataItem>;
+
+  public constructor (dataHandler: MongoConnectionHandler<ChapterDataItem>) {
     super();
     this.dataHandler = dataHandler;
     this.dataSchema = new Schema({
@@ -30,53 +33,65 @@ export default class MongoChapterDataHandler extends StandardChapterDataHandler 
     this.dataModel = this.dataHandler.bootModel('Chapter', this.dataSchema);
   }
 
-  static buildQuery ({ story_id, chapter_number }: { story_id?: string, chapter_number?: number }): QueryOptions {
+  private static buildQuery (
+    { storyId, chapterNumber }: { storyId?: string; chapterNumber?: number },
+  ): QueryOptions {
     const queryOpts: QueryOptions = {};
-    if (story_id !== undefined) {
-      queryOpts[ 'parent_story_id' ] = { '$eq': story_id };
+    if (storyId !== undefined) {
+      queryOpts.parent_story_id = { '$eq': storyId };
     }
-    if (chapter_number !== undefined) {
-      queryOpts[ 'chapter_number' ] = { '$eq': chapter_number };
+    if (chapterNumber !== undefined) {
+      queryOpts.chapter_number = { '$eq': chapterNumber };
     }
     return queryOpts;
   }
 
-  async deleteChapterById(chapterIdToRemove: string): Promise<ChapterDataItem> {
+  public async deleteChapterById (chapterIdToRemove: string): Promise<ChapterDataItem> {
     const chapterToDelete = await this.findChapterByRawId(chapterIdToRemove);
-    await this.dataModel.deleteOne({'_id': chapterIdToRemove});
+    await this.dataModel.deleteOne({ '_id': chapterIdToRemove });
     return chapterToDelete;
   }
 
-  findAllChaptersInStory(storyId: string, skip: number, limit: number, sort: { [p: string]: SortValues }): Promise<Array<ChapterDataItem>> {
+  public async findAllChaptersInStory (
+    storyId: string, skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<ChapterDataItem>> {
     return this.dataHandler
-      .findFromQuery(this.dataModel, MongoChapterDataHandler.buildQuery({ story_id: storyId }), skip, limit, sort);
+      .findFromQuery(
+        this.dataModel,
+        MongoChapterDataHandler.buildQuery({ storyId }),
+        skip, limit, sort,
+      );
   }
 
-  findChapterByRawId(rawId: string): Promise<ChapterDataItem> {
+  public async findChapterByRawId (rawId: string): Promise<ChapterDataItem> {
     return this.dataHandler.findById(this.dataModel, rawId);
   }
 
-  async findChapterByStoryAndNumber(storyId: string, chapterNumber: number): Promise<ChapterDataItem> {
+  public async findChapterByStoryAndNumber (
+    storyId: string, chapterNumber: number,
+  ): Promise<ChapterDataItem> {
     const chapter: Array<ChapterDataItem> = await this.dataHandler
       .findFromQuery(
         this.dataModel,
-        MongoChapterDataHandler.buildQuery({ story_id: storyId, chapter_number: chapterNumber }),
+        MongoChapterDataHandler.buildQuery({
+          storyId,
+          chapterNumber,
+        }),
         0, 1, {},
       );
     if (chapter.length > 0) {
-      return chapter[0];
-    } else {
-      throw new Error(`Unable to find chapter ${chapterNumber} within story of id '${storyId}'`);
+      return chapter[ 0 ];
     }
+    throw new Error(`Unable to find chapter ${chapterNumber} within story of id '${storyId}'`);
   }
 
-  getTotalChapterCountInStory(storyId: string): Promise<number> {
+  public async getTotalChapterCountInStory (storyId: string): Promise<number> {
     return this.dataHandler.getTotalCountFromQuery(
-      this.dataModel, MongoChapterDataHandler.buildQuery({ story_id: storyId }),
+      this.dataModel, MongoChapterDataHandler.buildQuery({ storyId }),
     );
   }
 
-  async upsertChapter(chapterToUpsert: ChapterDataItem): Promise<ChapterDataItem> {
+  public async upsertChapter (chapterToUpsert: ChapterDataItem): Promise<ChapterDataItem> {
     let dataToUpsert: Document<ChapterDataItem>;
     if (chapterToUpsert._id !== undefined) {
       dataToUpsert = await this.dataHandler.findById(this.dataModel, chapterToUpsert._id);
@@ -92,5 +107,4 @@ export default class MongoChapterDataHandler extends StandardChapterDataHandler 
     dataToUpsert.set('time_updated', Date.now());
     return (await this.dataHandler.upsertItem(dataToUpsert)) as unknown as ChapterDataItem;
   }
-
 }

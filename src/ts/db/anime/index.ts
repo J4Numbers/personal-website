@@ -1,17 +1,17 @@
-import StandardAnimeDataHandler from './standard-anime-data-handler';
+import type StandardAnimeDataHandler from './standard-anime-data-handler';
 import config from 'config';
 import MongoAnimeDataHandler from './mongo-anime-data-handler';
 import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {AnimeDataItem} from '../../objects/AnimeDataItem';
+import type { AnimeDataItem } from '../../objects/AnimeDataItem';
 
-let animeDataHandler: StandardAnimeDataHandler;
+let animeDataHandler: StandardAnimeDataHandler | undefined;
 
-const initialiseDataHandler = () => {
+const initialiseDataHandler = (): StandardAnimeDataHandler => {
   const connectionHandler = new MongoConnectionHandler<AnimeDataItem>(config.get('database.uri'));
   return new MongoAnimeDataHandler(connectionHandler);
 };
 
-export default () => {
+export default (): StandardAnimeDataHandler => {
   if (animeDataHandler === undefined) {
     animeDataHandler = initialiseDataHandler();
   }

@@ -1,14 +1,17 @@
 import StandardBlogDataHandler from './standard-blog-data-handler';
-import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {Date, Document, Model, QueryOptions, Schema, SortValues, Types} from 'mongoose';
-import {BlogDataItem} from '../../objects/BlogDataItem';
+import type MongoConnectionHandler from '../handlers/mongo-connection-handler';
+import type { Document, Model, QueryOptions, SortValues } from 'mongoose';
+import { Date, Schema, Types } from 'mongoose';
+import type { BlogDataItem } from '../../objects/BlogDataItem';
 
 export default class MongoBlogDataHandler extends StandardBlogDataHandler {
-  dataHandler: MongoConnectionHandler<BlogDataItem>;
-  dataSchema: Schema<BlogDataItem>;
-  dataModel: Model<BlogDataItem>;
+  private readonly dataHandler: MongoConnectionHandler<BlogDataItem>;
 
-  constructor(dataHandler: MongoConnectionHandler<BlogDataItem>) {
+  private readonly dataSchema: Schema<BlogDataItem>;
+
+  private readonly dataModel: Model<BlogDataItem>;
+
+  public constructor (dataHandler: MongoConnectionHandler<BlogDataItem>) {
     super();
     this.dataHandler = dataHandler;
     this.dataSchema = new Schema({
@@ -31,13 +34,7 @@ export default class MongoBlogDataHandler extends StandardBlogDataHandler {
     this.dataModel = this.dataHandler.bootModel('BlogPost', this.dataSchema);
   }
 
-  async deleteBlogById(blogIdToRemove: string): Promise<BlogDataItem> {
-    const blogToDelete = await this.findBlogByRawId(blogIdToRemove);
-    await this.dataModel.deleteOne({'_id': blogIdToRemove});
-    return blogToDelete;
-  }
-
-  static buildQuery (visible = false): QueryOptions {
+  private static buildQuery (visible = false): QueryOptions {
     const query: QueryOptions = {};
     if (visible) {
       query.public = true;
@@ -45,24 +42,35 @@ export default class MongoBlogDataHandler extends StandardBlogDataHandler {
     return query;
   }
 
-  findAllBlogs(skip: number, limit: number, sort: { [p: string]: SortValues }, visible: boolean): Promise<Array<BlogDataItem>> {
+  public async deleteBlogById (blogIdToRemove: string): Promise<BlogDataItem> {
+    const blogToDelete = await this.findBlogByRawId(blogIdToRemove);
+    await this.dataModel.deleteOne({ '_id': blogIdToRemove });
+    return blogToDelete;
+  }
+
+  public async findAllBlogs (
+    skip: number, limit: number, sort: Record<string, SortValues>, visible: boolean,
+  ): Promise<Array<BlogDataItem>> {
     return this.dataHandler
       .findFromQuery(this.dataModel, MongoBlogDataHandler.buildQuery(visible), skip, limit, sort);
   }
 
-  findBlogByRawId(rawId: string): Promise<BlogDataItem> {
+  public async findBlogByRawId (rawId: string): Promise<BlogDataItem> {
     return this.dataHandler.findById(this.dataModel, rawId);
   }
 
-  findBlogsByQuery(query: QueryOptions, skip: number, limit: number, sort: { [p: string]: SortValues }): Promise<Array<BlogDataItem>> {
+  public async findBlogsByQuery (
+    query: QueryOptions, skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<BlogDataItem>> {
     return this.dataHandler.findFromQuery(this.dataModel, query, skip, limit, sort);
   }
 
-  getTotalBlogCount(visible: boolean): Promise<number> {
-    return this.dataHandler.getTotalCountFromQuery(this.dataModel, MongoBlogDataHandler.buildQuery(visible));
+  public async getTotalBlogCount (visible: boolean): Promise<number> {
+    return this.dataHandler
+      .getTotalCountFromQuery(this.dataModel, MongoBlogDataHandler.buildQuery(visible));
   }
 
-  async upsertBlog(blogToUpsert: BlogDataItem): Promise<BlogDataItem> {
+  public async upsertBlog (blogToUpsert: BlogDataItem): Promise<BlogDataItem> {
     let dataToUpsert: Document<BlogDataItem>;
     if (blogToUpsert._id !== undefined) {
       dataToUpsert = await this.dataHandler.findById(this.dataModel, blogToUpsert._id);
@@ -78,5 +86,4 @@ export default class MongoBlogDataHandler extends StandardBlogDataHandler {
     dataToUpsert.set('time_updated', Date.now());
     return (await this.dataHandler.upsertItem(dataToUpsert)) as unknown as BlogDataItem;
   }
-
 }
