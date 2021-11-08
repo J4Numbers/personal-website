@@ -1,14 +1,18 @@
 import StandardMangaDataHandler from './standard-manga-data-handler';
-import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {Model, Schema, Date, SortValues, QueryOptions, Document, Types} from 'mongoose';
-import {MangaDataItem, MangaStatus} from '../../objects/MangaDataItem';
+import type MongoConnectionHandler from '../handlers/mongo-connection-handler';
+import type { Model, SortValues, QueryOptions, Document } from 'mongoose';
+import { Schema, Date, Types } from 'mongoose';
+import type { MangaDataItem } from '../../objects/MangaDataItem';
+import { MangaStatus } from '../../objects/MangaDataItem';
 
 export default class MongoMangaDataHandler extends StandardMangaDataHandler {
-  dataHandler: MongoConnectionHandler<MangaDataItem>;
-  dataSchema: Schema<MangaDataItem>;
-  dataModel: Model<MangaDataItem>;
+  private readonly dataHandler: MongoConnectionHandler<MangaDataItem>;
 
-  constructor(dataHandler: MongoConnectionHandler<MangaDataItem>) {
+  private readonly dataSchema: Schema<MangaDataItem>;
+
+  private readonly dataModel: Model<MangaDataItem>;
+
+  public constructor (dataHandler: MongoConnectionHandler<MangaDataItem>) {
     super();
     this.dataHandler = dataHandler;
     this.dataSchema = new Schema({
@@ -47,11 +51,7 @@ export default class MongoMangaDataHandler extends StandardMangaDataHandler {
     this.dataModel = this.dataHandler.bootModel('MangaBook', this.dataSchema);
   }
 
-  async findMangaByRawId(rawId: string): Promise<MangaDataItem> {
-    return this.dataHandler.findById(this.dataModel, rawId);
-  }
-
-  buildQuery (status = ''): QueryOptions {
+  private static buildQuery (status = ''): QueryOptions {
     const query: QueryOptions = {};
     if (status !== 'all') {
       if (status === 'read') {
@@ -76,21 +76,29 @@ export default class MongoMangaDataHandler extends StandardMangaDataHandler {
     return query;
   }
 
-  async findMangaStories(skip: number, limit: number, sort: { [p: string]: SortValues }, category: string): Promise<Array<MangaDataItem>> {
-    return this.dataHandler
-      .findFromQuery(this.dataModel, this.buildQuery(category), skip, limit, sort);
+  public async findMangaByRawId (rawId: string): Promise<MangaDataItem> {
+    return this.dataHandler.findById(this.dataModel, rawId);
   }
 
-  async findMangaStoriesByQuery(query: QueryOptions, skip: number, limit: number, sort: { [p: string]: SortValues }): Promise<Array<MangaDataItem>> {
+  public async findMangaStories (
+    skip: number, limit: number, sort: Record<string, SortValues>, category: string,
+  ): Promise<Array<MangaDataItem>> {
+    return this.dataHandler
+      .findFromQuery(this.dataModel, MongoMangaDataHandler.buildQuery(category), skip, limit, sort);
+  }
+
+  public async findMangaStoriesByQuery (
+    query: QueryOptions, skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<MangaDataItem>> {
     return this.dataHandler.findFromQuery(this.dataModel, query, skip, limit, sort);
   }
 
-  async getTotalStoryCount(category: string): Promise<number> {
+  public async getTotalStoryCount (category: string): Promise<number> {
     return this.dataHandler
-      .getTotalCountFromQuery(this.dataModel, this.buildQuery(category));
+      .getTotalCountFromQuery(this.dataModel, MongoMangaDataHandler.buildQuery(category));
   }
 
-  async upsertManga(mangaToUpsert: MangaDataItem): Promise<MangaDataItem> {
+  public async upsertManga (mangaToUpsert: MangaDataItem): Promise<MangaDataItem> {
     let dataToUpsert: Document<MangaDataItem>;
     if (mangaToUpsert._id !== undefined) {
       dataToUpsert = await this.dataHandler.findById(this.dataModel, mangaToUpsert._id);

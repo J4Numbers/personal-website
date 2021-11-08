@@ -1,17 +1,17 @@
 import config from 'config';
 import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import StandardStaticDataHandler from './standard-static-data-handler';
+import type StandardStaticDataHandler from './standard-static-data-handler';
 import MongoStaticDataHandler from './mongo-static-data-handler';
-import {StaticDataItem} from '../../objects/StaticDataItem';
+import type { StaticDataItem } from '../../objects/StaticDataItem';
 
-let staticDataHandler: StandardStaticDataHandler;
+let staticDataHandler: StandardStaticDataHandler | undefined;
 
-const initialiseDataHandler = () => {
+const initialiseDataHandler = (): StandardStaticDataHandler => {
   const connectionHandler = new MongoConnectionHandler<StaticDataItem>(config.get('database.uri'));
   return new MongoStaticDataHandler(connectionHandler);
 };
 
-export default () => {
+export default (): StandardStaticDataHandler => {
   if (staticDataHandler === undefined) {
     staticDataHandler = initialiseDataHandler();
   }

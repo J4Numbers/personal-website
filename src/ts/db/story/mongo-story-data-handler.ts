@@ -53,7 +53,10 @@ export default class MongoStoryDataHandler extends StandardStoryDataHandler {
     return this.dataHandler.findById(this.dataModel, rawId);
   }
 
-  public async findStoriesByQuery (query: QueryOptions, skip: number, limit: number, sort: Record<string, SortValues>): Promise<Array<StoryDataItem>> {
+  public async findStoriesByQuery (
+    query: QueryOptions, skip: number, limit: number,
+    sort: Record<string, SortValues>,
+  ): Promise<Array<StoryDataItem>> {
     return this.dataHandler.findFromQuery(this.dataModel, query, skip, limit, sort);
   }
 

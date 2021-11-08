@@ -1,15 +1,18 @@
 import StandardStaticDataHandler from './standard-static-data-handler';
-import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {Date, Document, Model, Schema, Types} from 'mongoose';
-import {StaticDataItem} from '../../objects/StaticDataItem';
-import {StaticDocumentTypes} from '../../objects/StaticDocumentTypes';
+import type MongoConnectionHandler from '../handlers/mongo-connection-handler';
+import type { Document, Model } from 'mongoose';
+import { Date, Schema } from 'mongoose';
+import type { StaticDataItem } from '../../objects/StaticDataItem';
+import type { StaticDocumentTypes } from '../../objects/StaticDocumentTypes';
 
 export default class MongoStaticDataHandler extends StandardStaticDataHandler {
-  dataHandler: MongoConnectionHandler<StaticDataItem>;
-  dataSchema: Schema<StaticDataItem>;
-  dataModel: Model<StaticDataItem>;
+  private readonly dataHandler: MongoConnectionHandler<StaticDataItem>;
 
-  constructor(dataHandler: MongoConnectionHandler<StaticDataItem>) {
+  private readonly dataSchema: Schema<StaticDataItem>;
+
+  private readonly dataModel: Model<StaticDataItem>;
+
+  public constructor (dataHandler: MongoConnectionHandler<StaticDataItem>) {
     super();
     this.dataHandler = dataHandler;
     this.dataSchema = new Schema({
@@ -23,11 +26,11 @@ export default class MongoStaticDataHandler extends StandardStaticDataHandler {
     this.dataModel = this.dataHandler.bootModel('StaticDocument', this.dataSchema);
   }
 
-  findStaticByType(rawId: StaticDocumentTypes): Promise<StaticDataItem> {
+  public async findStaticByType (rawId: StaticDocumentTypes): Promise<StaticDataItem> {
     return this.dataHandler.findById(this.dataModel, rawId.toString());
   }
 
-  async upsertStatic(staticToUpsert: StaticDataItem): Promise<StaticDataItem> {
+  public async upsertStatic (staticToUpsert: StaticDataItem): Promise<StaticDataItem> {
     let dataToUpsert: Document<StaticDataItem>;
     if (staticToUpsert._id !== undefined) {
       dataToUpsert = await this.dataHandler.findById(this.dataModel, staticToUpsert._id);
@@ -42,5 +45,4 @@ export default class MongoStaticDataHandler extends StandardStaticDataHandler {
     dataToUpsert.set('time_updated', Date.now());
     return (await this.dataHandler.upsertItem(dataToUpsert)) as unknown as StaticDataItem;
   }
-
 }

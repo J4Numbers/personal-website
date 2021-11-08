@@ -1,8 +1,8 @@
-import {StaticDataItem} from '../../objects/StaticDataItem';
-import {StaticDocumentTypes} from '../../objects/StaticDocumentTypes';
+import type { StaticDataItem } from '../../objects/StaticDataItem';
+import type { StaticDocumentTypes } from '../../objects/StaticDocumentTypes';
 
 export default abstract class StandardStaticDataHandler {
-  abstract findStaticByType (rawId: StaticDocumentTypes): Promise<StaticDataItem>;
+  public abstract findStaticByType (rawId: StaticDocumentTypes): Promise<StaticDataItem>;
 
-  abstract upsertStatic (staticToUpsert: StaticDataItem): Promise<StaticDataItem>;
+  public abstract upsertStatic (staticToUpsert: StaticDataItem): Promise<StaticDataItem>;
 }

@@ -1,14 +1,17 @@
 import StandardArtDataHandler from './standard-art-data-handler';
-import MongoConnectionHandler from '../handlers/mongo-connection-handler';
-import {Date, Document, Model, QueryOptions, Schema, SortValues, Types} from 'mongoose';
-import {ArtDataItem} from '../../objects/ArtDataItem';
+import type MongoConnectionHandler from '../handlers/mongo-connection-handler';
+import type { Document, Model, QueryOptions, SortValues } from 'mongoose';
+import { Date, Schema, Types } from 'mongoose';
+import type { ArtDataItem } from '../../objects/ArtDataItem';
 
 export default class MongoArtDataHandler extends StandardArtDataHandler {
-  dataHandler: MongoConnectionHandler<ArtDataItem>;
-  dataSchema: Schema<ArtDataItem>;
-  dataModel: Model<ArtDataItem>;
+  private readonly dataHandler: MongoConnectionHandler<ArtDataItem>;
 
-  constructor(dataHandler: MongoConnectionHandler<ArtDataItem>) {
+  private readonly dataSchema: Schema<ArtDataItem>;
+
+  private readonly dataModel: Model<ArtDataItem>;
+
+  public constructor (dataHandler: MongoConnectionHandler<ArtDataItem>) {
     super();
     this.dataHandler = dataHandler;
     this.dataSchema = new Schema({
@@ -29,30 +32,34 @@ export default class MongoArtDataHandler extends StandardArtDataHandler {
     this.dataModel = this.dataHandler.bootModel('ArtPiece', this.dataSchema);
   }
 
-  async deleteArtById(artIdToRemove: string): Promise<ArtDataItem> {
+  public async deleteArtById (artIdToRemove: string): Promise<ArtDataItem> {
     const artToDelete = await this.findArtByRawId(artIdToRemove);
-    await this.dataModel.deleteOne({'_id': artIdToRemove});
+    await this.dataModel.deleteOne({ '_id': artIdToRemove });
     return artToDelete;
   }
 
-  findAllArtPieces(skip: number, limit: number, sort: { [p: string]: SortValues }): Promise<Array<ArtDataItem>> {
+  public async findAllArtPieces (
+    skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<ArtDataItem>> {
     return this.dataHandler
       .findFromQuery(this.dataModel, {}, skip, limit, sort);
   }
 
-  findArtByRawId(rawId: string): Promise<ArtDataItem> {
+  public async findArtByRawId (rawId: string): Promise<ArtDataItem> {
     return this.dataHandler.findById(this.dataModel, rawId);
   }
 
-  findArtPiecesByQuery(query: QueryOptions, skip: number, limit: number, sort: { [p: string]: SortValues }): Promise<Array<ArtDataItem>> {
+  public async findArtPiecesByQuery (
+    query: QueryOptions, skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<ArtDataItem>> {
     return this.dataHandler.findFromQuery(this.dataModel, query, skip, limit, sort);
   }
 
-  getTotalArtPieceCount(): Promise<number> {
+  public async getTotalArtPieceCount (): Promise<number> {
     return this.dataHandler.getTotalCountFromQuery(this.dataModel, {});
   }
 
-  async upsertArt(pieceToUpsert: ArtDataItem): Promise<ArtDataItem> {
+  public async upsertArt (pieceToUpsert: ArtDataItem): Promise<ArtDataItem> {
     let dataToUpsert: Document<ArtDataItem>;
     if (pieceToUpsert._id !== undefined) {
       dataToUpsert = await this.dataHandler.findById(this.dataModel, pieceToUpsert._id);
@@ -68,5 +75,4 @@ export default class MongoArtDataHandler extends StandardArtDataHandler {
     dataToUpsert.set('time_updated', Date.now());
     return (await this.dataHandler.upsertItem(dataToUpsert)) as unknown as ArtDataItem;
   }
-
 }

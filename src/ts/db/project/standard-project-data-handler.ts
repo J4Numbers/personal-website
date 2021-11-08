@@ -1,16 +1,20 @@
-import {QueryOptions, SortValues} from 'mongoose';
-import {ProjectDataItem} from '../../objects/ProjectDataItem';
+import type { QueryOptions, SortValues } from 'mongoose';
+import type { ProjectDataItem } from '../../objects/ProjectDataItem';
 
 export default abstract class StandardProjectDataHandler {
-  abstract findProjectByRawId (rawId: string): Promise<ProjectDataItem>;
+  public abstract findProjectByRawId (rawId: string): Promise<ProjectDataItem>;
 
-  abstract findAllProjects (skip: number, limit: number, sort: { [key: string]: SortValues }, visible: boolean): Promise<Array<ProjectDataItem>>;
+  public abstract findAllProjects (
+    skip: number, limit: number, sort: Record<string, SortValues>, visible: boolean,
+  ): Promise<Array<ProjectDataItem>>;
 
-  abstract findProjectsByQuery (query: QueryOptions, skip: number, limit: number, sort: { [key: string]: SortValues }): Promise<Array<ProjectDataItem>>;
+  public abstract findProjectsByQuery (
+    query: QueryOptions, skip: number, limit: number, sort: Record<string, SortValues>,
+  ): Promise<Array<ProjectDataItem>>;
 
-  abstract getTotalProjectCount (visible: boolean): Promise<number>;
+  public abstract getTotalProjectCount (visible: boolean): Promise<number>;
 
-  abstract upsertProject (projectToUpsert: ProjectDataItem): Promise<ProjectDataItem>;
+  public abstract upsertProject (projectToUpsert: ProjectDataItem): Promise<ProjectDataItem>;
 
-  abstract deleteProjectById (projectIdToRemove: string): Promise<ProjectDataItem>;
+  public abstract deleteProjectById (projectIdToRemove: string): Promise<ProjectDataItem>;
 }
