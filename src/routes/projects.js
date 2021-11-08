@@ -20,10 +20,78 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const getAllProjects = require('../journey/base/projects/get_all_projects');
-const getOneProject = require('../journey/base/projects/get_one_project');
+const errors = require('restify-errors');
+
+const renderer = require('../../../lib/renderer').nunjucksRenderer();
+
+const { getAllProjects, getOneProject } = require('./common');
+
+const prepareProjectPage = (req, res, next) => {
+  res.locals.pageMax = 12;
+  res.locals.visible = true;
+  next();
+};
+
+const viewAllProjects = async (req, res, next) => {
+  res.contentType = 'text/html';
+  res.header('content-type', 'text/html');
+  res.send(200, renderer.render('pages/project_all.njk', {
+    top_page: {
+      title:     'My Projects',
+      tagline:   'A list of things that I have made in my spare time at some point or another.',
+      image_src: '/assets/images/J_handle.png',
+      image_alt: 'Main face of the site',
+    },
+
+    content: {
+      projects: res.locals.projects,
+    },
+
+    pagination: {
+      base_url:  '/projects?',
+      total:     res.locals.projectCount,
+      page:      Math.max((req.query.page || 1), 1),
+      page_size: 10,
+    },
+
+    head: {
+      title:        'J4Numbers :: Projects',
+      description:  'Home to the wild things',
+      current_page: 'projects',
+    },
+  }));
+  next();
+};
+
+const viewOneProject = async (req, res, next) => {
+  if (res.locals.project !== null) {
+    res.contentType = 'text/html';
+    res.header('content-type', 'text/html');
+    res.send(200, renderer.render('pages/project_single.njk', {
+      top_page: {
+        title:        res.locals.project.long_title,
+        project_tags: res.locals.project.tags,
+        image_src:    '/assets/images/J_handle.png',
+        image_alt:    'Main face of the site',
+      },
+
+      content: {
+        project_text: res.locals.project.description,
+      },
+
+      head: {
+        title:        `J4Numbers :: ${res.locals.project.long_title}`,
+        description:  'Home to the wild things',
+        current_page: 'projects',
+      },
+    }));
+    next();
+  } else {
+    next(new errors.NotFoundError());
+  }
+};
 
 module.exports = (server) => {
-  getAllProjects(server);
-  getOneProject(server);
+  server.get('/projects', prepareProjectPage, getAllProjects, viewAllProjects);
+  server.get('/projects/:projectId', getOneProject, viewOneProject);
 };

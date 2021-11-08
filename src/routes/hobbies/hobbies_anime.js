@@ -20,10 +20,82 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const viewAllAnime = require('../../journey/hobbies/anime/get_all_anime');
-const viewOneAnime = require('../../journey/hobbies/anime/get_one_anime');
+const { getAllAnime, getOneAnime } = require('../common');
+
+const renderer = require('../../../lib/renderer').nunjucksRenderer();
+
+const prepareAnimeList = (req, res, next) => {
+  res.locals.pageMax = 12;
+  next();
+};
+
+const viewAllAnime = async (req, res, next) => {
+  let baseUrl = '';
+  if (req.query.category) {
+    baseUrl += `category=${req.query.category}&`;
+  }
+  if (req.query.q) {
+    baseUrl += `q=${req.query.q}&`;
+  }
+  res.contentType = 'text/html';
+  res.header('content-type', 'text/html');
+  res.send(200, renderer.render('pages/anime/anime_all.njk', {
+    top_page: {
+      title:     'My Anime Watchlist',
+      tagline:   'A list of all the strange things that I have seen at some point or another',
+      image_src: '/assets/images/J_handle.png',
+      image_alt: 'Main face of the site',
+    },
+
+    content: {
+      shows: res.locals.anime,
+    },
+
+    pagination: {
+      base_url:  `/hobbies/anime?${baseUrl}`,
+      total:     res.locals.animeCount,
+      page:      Math.max((req.query.page || 1), 1),
+      page_size: 12,
+    },
+
+    head: {
+      title:            'J4Numbers :: Hobbies :: Anime',
+      description:      'Home to the wild things',
+      current_page:     'hobbies',
+      current_sub_page: 'anime',
+      current_category: req.query.category || 'all',
+    },
+  }));
+  next();
+};
+
+const viewOneAnime = async (req, res, next) => {
+  res.contentType = 'text/html';
+  res.header('content-type', 'text/html');
+  res.send(200, renderer.render('pages/anime/anime_one.njk', {
+    top_page: {
+      title:     res.locals.anime.title.romaji,
+      tagline:   'A list of all the strange things that I have seen at some point or another',
+      image_src: res.locals.anime.cover_img.large,
+      image_alt: res.locals.anime.title.romaji,
+    },
+
+    content: {
+      show:     res.locals.anime,
+      comments: res.locals.anime.review,
+    },
+
+    head: {
+      title:            'J4Numbers :: Hobbies :: Anime :: ',
+      description:      'Home to the wild things',
+      current_page:     'hobbies',
+      current_sub_page: 'anime',
+    },
+  }));
+  next();
+};
 
 module.exports = (server) => {
-  server.get('/hobbies/anime', viewAllAnime);
-  server.get('/hobbies/anime/:animeId', viewOneAnime);
+  server.get('/hobbies/anime', prepareAnimeList, getAllAnime, viewAllAnime);
+  server.get('/hobbies/anime/:animeId', getOneAnime, viewOneAnime);
 };

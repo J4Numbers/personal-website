@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
 const adminViewAllAnime = require('../../journey/admin/anime/get_all_anime');
 const adminViewOneAnime = require('../../journey/admin/anime/get_one_anime');
@@ -29,9 +29,9 @@ const adminEditOneAnime = require('../../journey/admin/anime/post_edit_anime');
 const adminRefreshAnimeList = require('../../journey/admin/anime/refresh_anime');
 
 module.exports = (server) => {
-  server.get('/admin/anime', testLoggedIn, adminViewAllAnime);
-  server.get('/admin/anime/:animeId', testLoggedIn, adminViewOneAnime);
-  server.get('/admin/anime/:animeId/edit', testLoggedIn, adminViewEditOneAnime);
-  server.post('/admin/anime/:animeId/edit', testLoggedIn, adminEditOneAnime);
-  server.post('/admin/anime/refresh', testLoggedIn, adminRefreshAnimeList);
+  server.get('/admin/anime', testAdministratorNotLoggedIn, adminViewAllAnime);
+  server.get('/admin/anime/:animeId', testAdministratorNotLoggedIn, adminViewOneAnime);
+  server.get('/admin/anime/:animeId/edit', testAdministratorNotLoggedIn, adminViewEditOneAnime);
+  server.post('/admin/anime/:animeId/edit', testAdministratorNotLoggedIn, adminEditOneAnime);
+  server.post('/admin/anime/refresh', testAdministratorNotLoggedIn, adminRefreshAnimeList);
 };

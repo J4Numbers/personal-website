@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
 // All endpoints below are prefixed with `/admin/stories/:storyId/chapter`
 
@@ -33,27 +33,39 @@ const viewDeleteSingleChapter = require('../../journey/admin/chapters/view_delet
 const deleteSingleChapter = require('../../journey/admin/chapters/delete_one_chapter');
 
 module.exports = (server) => {
-  server.get('/admin/stories/:storyId/chapter/new', testLoggedIn, viewCreateNewChapter);
-  server.post('/admin/stories/:storyId/chapter/new', testLoggedIn, createNewChapter);
-  server.get('/admin/stories/:storyId/chapter/:chapterNumber', testLoggedIn, viewSingleChapter);
+  server.get(
+    '/admin/stories/:storyId/chapter/new',
+    testAdministratorNotLoggedIn,
+    viewCreateNewChapter,
+  );
+  server.post(
+    '/admin/stories/:storyId/chapter/new',
+    testAdministratorNotLoggedIn,
+    createNewChapter,
+  );
+  server.get(
+    '/admin/stories/:storyId/chapter/:chapterNumber',
+    testAdministratorNotLoggedIn,
+    viewSingleChapter,
+  );
   server.get(
     '/admin/stories/:storyId/chapter/:chapterNumber/edit',
-    testLoggedIn,
+    testAdministratorNotLoggedIn,
     viewEditSingleChapter,
   );
   server.post(
     '/admin/stories/:storyId/chapter/:chapterNumber/edit',
-    testLoggedIn,
+    testAdministratorNotLoggedIn,
     editSingleChapter,
   );
   server.get(
     '/admin/stories/:storyId/chapter/:chapterNumber/delete',
-    testLoggedIn,
+    testAdministratorNotLoggedIn,
     viewDeleteSingleChapter,
   );
   server.post(
     '/admin/stories/:storyId/chapter/:chapterNumber/delete',
-    testLoggedIn,
+    testAdministratorNotLoggedIn,
     deleteSingleChapter,
   );
 };

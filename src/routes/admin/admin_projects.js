@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
 const viewAllProjects = require('../../journey/admin/projects/view_all_projects');
 const createNewProject = require('../../journey/admin/projects/view_create_new_project');
@@ -32,12 +32,14 @@ const viewDeleteProject = require('../../journey/admin/projects/view_delete_one_
 const deleteSingleProject = require('../../journey/admin/projects/delete_single_project');
 
 module.exports = (server) => {
-  server.get('/admin/projects', testLoggedIn, viewAllProjects);
-  server.get('/admin/projects/new', testLoggedIn, createNewProject);
-  server.post('/admin/projects/new', testLoggedIn, postNewProject);
-  server.get('/admin/projects/:projectId', testLoggedIn, getOneProject);
-  server.get('/admin/projects/:projectId/edit', testLoggedIn, editOneProject);
-  server.post('/admin/projects/:projectId/edit', testLoggedIn, postProjectEdits);
-  server.get('/admin/projects/:projectId/delete', testLoggedIn, viewDeleteProject);
-  server.post('/admin/projects/:projectId/delete', testLoggedIn, deleteSingleProject);
+  server.get('/admin/projects', testAdministratorNotLoggedIn, viewAllProjects);
+  server.get('/admin/projects/new', testAdministratorNotLoggedIn, createNewProject);
+  server.post('/admin/projects/new', testAdministratorNotLoggedIn, postNewProject);
+  server.get('/admin/projects/:projectId', testAdministratorNotLoggedIn, getOneProject);
+  server.get('/admin/projects/:projectId/edit', testAdministratorNotLoggedIn, editOneProject);
+  server.post('/admin/projects/:projectId/edit', testAdministratorNotLoggedIn, postProjectEdits);
+  server.get('/admin/projects/:projectId/delete', testAdministratorNotLoggedIn, viewDeleteProject);
+  server.post(
+    '/admin/projects/:projectId/delete', testAdministratorNotLoggedIn, deleteSingleProject,
+  );
 };

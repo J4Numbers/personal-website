@@ -20,10 +20,52 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const robots = require('../journey/seo/robots');
-const sitemap = require('../journey/seo/sitemap');
+const fs = require('fs');
+const path = require('path');
+const config = require('config');
+const errors = require('restify-errors');
+
+const staticHandler = require('../../js/handlers').fetchStaticHandler();
+const staticTypes = require('../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
+
+const sitemapSorter = (a, b) => (
+  // eslint-disable-next-line no-nested-ternary
+  (a.page_name > b.page_name)
+    ? 1
+    : ((a.page_name < [ 'page_name' ]) ? -1 : 0));
+
+const gatherRobots = async (req, res, next) => {
+  res.outputText = fs.readFileSync(path.join(__dirname, '../../seo/robots.txt'));
+  next();
+};
+
+const gatherSitemap = async (req, res, next) => {
+  try {
+    const baseLink = `${
+      config.get('app.http2.enabled') ? 'https' : 'http'
+    }://${config.get('app.hostname')}:${config.get('app.port')}`;
+
+    const sitemapItems = await staticHandler.getStaticById(staticTypes.SITEMAP);
+    const sortedSiteMap = ((sitemapItems || {}).content || []).sort(sitemapSorter);
+    res.outputText = sortedSiteMap.reduce(
+      (ongoing, current) => `${ongoing}${baseLink}${current.page_link}\n`,
+      '',
+    );
+    next();
+  } catch (caught) {
+    req.log.warn(`Catch during find static :: ${caught}`);
+    next(new errors.InternalServerError(caught.message));
+  }
+};
+
+const displayText = (req, res, next) => {
+  res.contentType = 'text/plain';
+  res.header('content-type', 'text/plain');
+  res.send(200, res.outputText);
+  next();
+};
 
 module.exports = (server) => {
-  server.get('/robots.txt', robots);
-  server.get('/sitemap.txt', sitemap);
+  server.get('/robots.txt', gatherRobots, displayText);
+  server.get('/sitemap.txt', gatherSitemap, displayText);
 };

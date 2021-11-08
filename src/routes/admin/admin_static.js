@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
 const statics = require('../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
@@ -76,15 +76,17 @@ const staticList = [
 ];
 
 module.exports = (server) => {
-  server.get('/admin/statics', testLoggedIn, viewAllStatics);
+  server.get('/admin/statics', testAdministratorNotLoggedIn, viewAllStatics);
 
   staticList.forEach((pageInfo) => {
-    server.get(`/admin/statics/${pageInfo.name}`, testLoggedIn, extractStatic, pageInfo.view);
-    server.get(`/admin/statics/${pageInfo.name}/edit`, testLoggedIn, extractStatic, pageInfo.edit);
+    server.get(`/admin/statics/${pageInfo.name}`,
+      testAdministratorNotLoggedIn, extractStatic, pageInfo.view);
+    server.get(`/admin/statics/${pageInfo.name}/edit`,
+      testAdministratorNotLoggedIn, extractStatic, pageInfo.edit);
 
     server.post(
       `/admin/statics/${pageInfo.name}/edit`,
-      testLoggedIn, extractStatic, pageInfo.submit,
+      testAdministratorNotLoggedIn, extractStatic, pageInfo.submit,
     );
   });
 };
