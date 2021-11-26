@@ -22,7 +22,7 @@
 
 const { getAllAnime, getOneAnime } = require('../common');
 
-const renderer = require('../../../lib/renderer').nunjucksRenderer();
+const renderer = require('../../lib/renderer').nunjucksRenderer();
 
 const prepareAnimeList = (req, res, next) => {
   res.locals.pageMax = 12;

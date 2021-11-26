@@ -24,9 +24,9 @@ const envs = process.env;
 const moment = require('moment');
 const errors = require('restify-errors');
 
-const staticHandler = require('../../../js/handlers').fetchStaticHandler();
-const staticTypes = require('../../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
-const renderer = require('../../../lib/renderer').nunjucksRenderer();
+const staticHandler = require('../js/handlers').fetchStaticHandler();
+const staticTypes = require('../js/objects/StaticDocumentTypes').StaticDocumentTypes;
+const renderer = require('../lib/renderer').nunjucksRenderer();
 
 const contactSorter = (a, b) => (
   // eslint-disable-next-line no-nested-ternary

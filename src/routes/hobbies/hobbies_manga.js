@@ -22,7 +22,7 @@
 
 const { getAllManga, getOneManga } = require('../common');
 
-const renderer = require('../../../lib/renderer').nunjucksRenderer();
+const renderer = require('../../lib/renderer').nunjucksRenderer();
 
 const prepareMangaList = (req, res, next) => {
   res.locals.pageMax = 12;

@@ -24,7 +24,7 @@ const errors = require('restify-errors');
 
 const { getAllArt, getOneArt } = require('../common');
 
-const renderer = require('../../../lib/renderer').nunjucksRenderer();
+const renderer = require('../../lib/renderer').nunjucksRenderer();
 
 const prepareArtList = (req, res, next) => {
   res.locals.pageMax = 12;
