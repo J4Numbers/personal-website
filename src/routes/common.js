@@ -1,11 +1,11 @@
 const errors = require('restify-errors');
 
-const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
-const artHandler = require('../../../js/handlers').fetchArtHandler();
-const blogHandler = require('../../../js/handlers').fetchBlogHandler();
-const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
-const projectHandler = require('../../../js/handlers').fetchProjectHandler();
-const writingHandler = require('../../../js/handlers').fetchWritingHandler();
+const animeHandler = require('../js/handlers').fetchAnimeHandler();
+const artHandler = require('../js/handlers').fetchArtHandler();
+const blogHandler = require('../js/handlers').fetchBlogHandler();
+const mangaHandler = require('../js/handlers').fetchMangaHandler();
+const projectHandler = require('../js/handlers').fetchProjectHandler();
+const writingHandler = require('../js/handlers').fetchWritingHandler();
 
 const getAllAnime = async (req, res, next) => {
   try {

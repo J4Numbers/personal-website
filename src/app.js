@@ -25,7 +25,7 @@ const uuid = require('uuid').v4;
 const config = require('config');
 const restify = require('restify');
 
-const log = require('./js/logger/bunyan_logger').default();
+const log = require('./js/logger/bunyan-logger').default();
 const routingEngine = require('./routes');
 const onEventHandlers = require('./middleware/on_handlers');
 const preRequestHandlers = require('./middleware/pre_handlers');

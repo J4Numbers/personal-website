@@ -23,9 +23,9 @@
 const config = require('config');
 
 const { testFriendLoggedIn } = require('./common');
-const friendlyAuthHandler = require('../../js/auth').fetchFriendAuthHandler();
-const tokenHandler = require('../../js/handlers').fetchTokenHandler();
-const renderer = require('../../lib/renderer').nunjucksRenderer();
+const friendlyAuthHandler = require('../../../js/auth').fetchFriendAuthHandler();
+const tokenHandler = require('../../../js/handlers').fetchTokenHandler();
+const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
 const showFriendLogin = async (req, res, next) => {
   res.send(200, renderer.render('pages/me/me_login.njk', {

@@ -22,13 +22,13 @@
 
 const errors = require('restify-errors');
 
-const renderer = require('../../../lib/renderer').nunjucksRenderer();
+const renderer = require('../lib/renderer').nunjucksRenderer();
 
-const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
-const artHandler = require('../../../js/handlers').fetchArtHandler();
-const blogHandler = require('../../../js/handlers').fetchBlogHandler();
-const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
-const writingHandler = require('../../../js/handlers').fetchWritingHandler();
+const animeHandler = require('../js/handlers').fetchAnimeHandler();
+const artHandler = require('../js/handlers').fetchArtHandler();
+const blogHandler = require('../js/handlers').fetchBlogHandler();
+const mangaHandler = require('../js/handlers').fetchMangaHandler();
+const writingHandler = require('../js/handlers').fetchWritingHandler();
 
 const loadResults = (req, res, next) => {
   res.locals.searchResults = {};

@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const renderer = require('../../lib/renderer/').nunjucksRenderer();
+const renderer = require('../lib/renderer/').nunjucksRenderer();
 
 const viewHomepage = async (req, res, next) => {
   res.contentType = 'text/html';

@@ -25,8 +25,8 @@ const path = require('path');
 const config = require('config');
 const errors = require('restify-errors');
 
-const staticHandler = require('../../js/handlers').fetchStaticHandler();
-const staticTypes = require('../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
+const staticHandler = require('../js/handlers').fetchStaticHandler();
+const staticTypes = require('../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
 const sitemapSorter = (a, b) => (
   // eslint-disable-next-line no-nested-ternary

@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 const errors = require('restify-errors');
-const renderer = require('../../../lib/renderer').nunjucksRenderer();
+const renderer = require('../lib/renderer').nunjucksRenderer();
 
 const { getAllBlogs, getOneBlog } = require('./common');
 
