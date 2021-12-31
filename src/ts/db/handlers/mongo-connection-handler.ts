@@ -3,7 +3,7 @@ import type {
   Model,
   Schema,
   FilterQuery,
-  Document, EnforceDocument,
+  Document, HydratedDocument,
 } from 'mongoose';
 import {
   createConnection,
@@ -27,7 +27,7 @@ export default class MongoConnectionHandler<T extends BasicDataItem> {
 
   public async findById (
     model: Model<T>, id: string,
-  ): Promise<EnforceDocument<T, any, any> | null> {
+  ): Promise<HydratedDocument<T, any, any> | null> {
     try {
       return await model.findById(id);
     } catch (e: unknown) {
@@ -39,7 +39,6 @@ export default class MongoConnectionHandler<T extends BasicDataItem> {
   public async findOrCreate (model: Model<T>, id: string): Promise<T> {
     try {
       return await model.findOneAndUpdate(
-        // @ts-expect-error Meddling with Mongo differences between spec and reality.
         { '_id': id },
         {},
         { upsert: true,
@@ -53,7 +52,6 @@ export default class MongoConnectionHandler<T extends BasicDataItem> {
 
   public async deleteById (model: Model<T>, id: string): Promise<void> {
     try {
-      // @ts-expect-error Meddling with Mongo differences between spec and reality.
       await model.deleteOne({ '_id': id });
     } catch (e: unknown) {
       logger.warn((e as Error).message);
