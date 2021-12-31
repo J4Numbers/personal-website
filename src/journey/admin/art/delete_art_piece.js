@@ -20,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const ArtHandler = require('../../../lib/ArtHandler');
-const artHandlerInstance = ArtHandler.getHandler();
+const artHandler = require('../../../js/handlers').fetchArtHandler();
 
 const deleteArtPiece = async (req, res, next) => {
   try {
-    await artHandlerInstance.deleteArt(req.params.artId);
+    await artHandler.deleteArt(req.params.artId);
     res.redirect(303, '/admin/art/', next);
   } catch (e) {
     req.log.warn(`Issue found when trying to delete art piece :: ${e.message}`);

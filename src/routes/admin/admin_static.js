@@ -20,18 +20,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
-const statics = require('../../lib/StaticDocumentTypes');
+const statics = require('../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
 const { extractStatic } = require('../../journey/admin/statics/misc');
 const viewAllStatics = require('../../journey/admin/statics/view_all_statics');
-const viewSingleTextStaticDocument = require('../../journey/admin/statics/view_static_text_document');
-const viewSingleListContactStaticDocument = require('../../journey/admin/statics/view_static_contact_document');
-const viewSingleListSiteMapStaticDocument = require('../../journey/admin/statics/view_static_sitemap_document');
-const editSingleTextStaticDocument = require('../../journey/admin/statics/view_edit_static_text_document');
-const editSingleListContactStaticDocument = require('../../journey/admin/statics/view_edit_static_contact_document');
-const editSingleListSiteMapStaticDocument = require('../../journey/admin/statics/view_edit_static_sitemap_document');
+const viewSingleTextStaticDocument = require(
+  '../../journey/admin/statics/view_static_text_document',
+);
+const viewSingleListContactStaticDocument = require(
+  '../../journey/admin/statics/view_static_contact_document',
+);
+const viewSingleListSiteMapStaticDocument = require(
+  '../../journey/admin/statics/view_static_sitemap_document',
+);
+const editSingleTextStaticDocument = require(
+  '../../journey/admin/statics/view_edit_static_text_document',
+);
+const editSingleListContactStaticDocument = require(
+  '../../journey/admin/statics/view_edit_static_contact_document',
+);
+const editSingleListSiteMapStaticDocument = require(
+  '../../journey/admin/statics/view_edit_static_sitemap_document',
+);
 const editTextDocument = require('../../journey/admin/statics/edit_static_text_document');
 const editSitemapListDocument = require('../../journey/admin/statics/edit_static_sitemap_document');
 const editContactListDocument = require('../../journey/admin/statics/edit_static_contact_document');
@@ -64,15 +76,17 @@ const staticList = [
 ];
 
 module.exports = (server) => {
-  server.get('/admin/statics', testLoggedIn, viewAllStatics);
+  server.get('/admin/statics', testAdministratorNotLoggedIn, viewAllStatics);
 
   staticList.forEach((pageInfo) => {
-    server.get(`/admin/statics/${pageInfo.name}`, testLoggedIn, extractStatic, pageInfo.view);
-    server.get(`/admin/statics/${pageInfo.name}/edit`, testLoggedIn, extractStatic, pageInfo.edit);
+    server.get(`/admin/statics/${pageInfo.name}`,
+      testAdministratorNotLoggedIn, extractStatic, pageInfo.view);
+    server.get(`/admin/statics/${pageInfo.name}/edit`,
+      testAdministratorNotLoggedIn, extractStatic, pageInfo.edit);
 
     server.post(
       `/admin/statics/${pageInfo.name}/edit`,
-      testLoggedIn, extractStatic, pageInfo.submit,
+      testAdministratorNotLoggedIn, extractStatic, pageInfo.submit,
     );
   });
 };

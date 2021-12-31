@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
 const viewAllArtPieces = require('../../journey/admin/art/get_all_art_pieces');
 const viewCreateNewArtPiece = require('../../journey/admin/art/view_create_new_art_piece');
@@ -32,12 +32,12 @@ const viewDeleteArtPiece = require('../../journey/admin/art/view_delete_art_piec
 const deleteArtPiece = require('../../journey/admin/art/delete_art_piece');
 
 module.exports = (server) => {
-  server.get('/admin/art', testLoggedIn, viewAllArtPieces);
-  server.get('/admin/art/new', testLoggedIn, viewCreateNewArtPiece);
-  server.post('/admin/art/new', testLoggedIn, postNewArtPiece);
-  server.get('/admin/art/:artId', testLoggedIn, viewArtPiece);
-  server.get('/admin/art/:artId/edit', testLoggedIn, viewEditArtPiece);
-  server.post('/admin/art/:artId/edit', testLoggedIn, submitEditedArtPiece);
-  server.get('/admin/art/:artId/delete', testLoggedIn, viewDeleteArtPiece);
-  server.post('/admin/art/:artId/delete', testLoggedIn, deleteArtPiece);
+  server.get('/admin/art', testAdministratorNotLoggedIn, viewAllArtPieces);
+  server.get('/admin/art/new', testAdministratorNotLoggedIn, viewCreateNewArtPiece);
+  server.post('/admin/art/new', testAdministratorNotLoggedIn, postNewArtPiece);
+  server.get('/admin/art/:artId', testAdministratorNotLoggedIn, viewArtPiece);
+  server.get('/admin/art/:artId/edit', testAdministratorNotLoggedIn, viewEditArtPiece);
+  server.post('/admin/art/:artId/edit', testAdministratorNotLoggedIn, submitEditedArtPiece);
+  server.get('/admin/art/:artId/delete', testAdministratorNotLoggedIn, viewDeleteArtPiece);
+  server.post('/admin/art/:artId/delete', testAdministratorNotLoggedIn, deleteArtPiece);
 };

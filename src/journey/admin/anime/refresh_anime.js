@@ -22,12 +22,12 @@
 
 const errors = require('restify-errors');
 
-const importHandler = require('../../../lib/ImportHandler');
+const importHandler = require('../../../js/handlers').fetchImportHandler();
 
 const refreshAnime = async function (req, res, next) {
   try {
-    req.log.info('Importing new anime into mongo...');
-    await importHandler.importAnimeIntoMongo();
+    req.log.info('Importing new anime into our database...');
+    await importHandler.importAnimeAniListItems();
     res.contentType = 'application/json';
     res.header('content-type', 'application/json');
     res.send(200, {});

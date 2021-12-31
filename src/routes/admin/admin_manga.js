@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
 const viewAllManga = require('../../journey/admin/manga/view_all_manga');
 const viewSingleManga = require('../../journey/admin/manga/view_single_manga');
@@ -29,9 +29,9 @@ const editSingleManga = require('../../journey/admin/manga/edit_single_manga');
 const refreshMangaDatabase = require('../../journey/admin/manga/refresh_manga_database');
 
 module.exports = (server) => {
-  server.get('/admin/manga', testLoggedIn, viewAllManga);
-  server.get('/admin/manga/:mangaId', testLoggedIn, viewSingleManga);
-  server.get('/admin/manga/:mangaId/edit', testLoggedIn, viewEditSingleManga);
-  server.post('/admin/manga/:mangaId/edit', testLoggedIn, editSingleManga);
-  server.post('/admin/manga/refresh', testLoggedIn, refreshMangaDatabase);
+  server.get('/admin/manga', testAdministratorNotLoggedIn, viewAllManga);
+  server.get('/admin/manga/:mangaId', testAdministratorNotLoggedIn, viewSingleManga);
+  server.get('/admin/manga/:mangaId/edit', testAdministratorNotLoggedIn, viewEditSingleManga);
+  server.post('/admin/manga/:mangaId/edit', testAdministratorNotLoggedIn, editSingleManga);
+  server.post('/admin/manga/refresh', testAdministratorNotLoggedIn, refreshMangaDatabase);
 };

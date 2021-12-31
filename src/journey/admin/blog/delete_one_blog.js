@@ -20,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const BlogHandler = require('../../../lib/BlogHandler');
-const blogHandlerInstance = BlogHandler.getHandler();
+const blogHandler = require('../../../js/handlers').fetchBlogHandler();
 
 const deleteOneBlog = async (req, res, next) => {
   try {
-    await blogHandlerInstance.deleteBlog(req.params.blogId);
+    await blogHandler.deleteBlog(req.params.blogId);
     res.redirect(303, '/admin/blog/', next);
   } catch (e) {
     req.log.warn(`Issue found when trying to delete blog_id: ${req.params.blogId} :: ${e.message}`);

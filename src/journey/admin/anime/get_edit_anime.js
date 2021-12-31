@@ -23,11 +23,11 @@
 const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
-const animeHandlerInstance = require('../../../lib/AnimeHandler').getHandler();
+const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
 
 const getEditAnime = async (req, res, next) => {
   try {
-    const show = await animeHandlerInstance.findAnimeByRawId(req.params.animeId);
+    const show = await animeHandler.getAnimeById(req.params.animeId);
 
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');

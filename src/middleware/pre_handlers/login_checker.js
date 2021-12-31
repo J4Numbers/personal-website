@@ -20,11 +20,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const tokenHandler = require('../../lib/login');
+const tokenHandler = require('../../js/handlers').fetchTokenHandler();
 
 const confirmLoggedIn = async (req, res, next) => {
-  res.nunjucks.logged_in = await tokenHandler.isLoggedIn(res.cookies[ 'login-token' ]);
-  res.nunjucks.friendly = await tokenHandler.isFriendly(res.cookies[ 'login-token' ]);
+  const loginToken = await tokenHandler.decodeToken(res.cookies[ 'login-token' ]);
+  res.nunjucks.logged_in = (loginToken.admin !== undefined) ? loginToken.admin : false;
+  res.nunjucks.friendly = (loginToken.friendly !== undefined) ? loginToken.friendly : false;
   next();
 };
 

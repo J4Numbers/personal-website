@@ -20,8 +20,122 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const doSearch = require('../journey/base/search/do_search');
+const errors = require('restify-errors');
+
+const renderer = require('../lib/renderer').nunjucksRenderer();
+
+const animeHandler = require('../js/handlers').fetchAnimeHandler();
+const artHandler = require('../js/handlers').fetchArtHandler();
+const blogHandler = require('../js/handlers').fetchBlogHandler();
+const mangaHandler = require('../js/handlers').fetchMangaHandler();
+const writingHandler = require('../js/handlers').fetchWritingHandler();
+
+const loadResults = (req, res, next) => {
+  res.locals.searchResults = {};
+  next();
+};
+
+const resolveAnimeItems = async (req, res, next) => {
+  try {
+    const tagList = req.query.q.split(/, */u);
+    res.locals.searchResults.anime = await animeHandler.lookupAnimeTitle(req.query.q, tagList);
+    next();
+  } catch (e) {
+    req.log.warn('Error when trying to search anime items');
+    req.log.warn(e.message);
+    next(new errors.InternalServerError(e));
+  }
+};
+
+const resolveArtItems = async (req, res, next) => {
+  try {
+    const tagList = req.query.q.split(/, */u);
+    res.locals.searchResults.art = await artHandler.lookupArtTitles(req.query.q, tagList);
+    next();
+  } catch (e) {
+    req.log.warn('Error when trying to search art items');
+    req.log.warn(e.message);
+    next(new errors.InternalServerError(e));
+  }
+};
+
+const resolveBlogItems = async (req, res, next) => {
+  try {
+    const tagList = req.query.q.split(/, */u);
+    const blogs = await blogHandler.lookupBlogs(req.query.q, tagList);
+    res.locals.searchResults.blogs = (res.nunjucks.friendly)
+      ? blogs
+      : blogs.filter((item) => item.public);
+    next();
+  } catch (e) {
+    req.log.warn('Error when trying to search manga items');
+    req.log.warn(e.message);
+    next(new errors.InternalServerError(e));
+  }
+};
+
+const resolveMangaItems = async (req, res, next) => {
+  try {
+    const tagList = req.query.q.split(/, */u);
+    res.locals.searchResults.manga = await mangaHandler.lookupMangaTitle(req.query.q, tagList);
+    next();
+  } catch (e) {
+    req.log.warn('Error when trying to search manga items');
+    req.log.warn(e.message);
+    next(new errors.InternalServerError(e));
+  }
+};
+
+const resolveStoryItems = async (req, res, next) => {
+  try {
+    const tagList = req.query.q.split(/, */u);
+    res.locals.searchResults.stories = await writingHandler.lookupStories(req.query.q, tagList);
+    next();
+  } catch (e) {
+    req.log.warn('Error when trying to search story items');
+    req.log.warn(e.message);
+    next(new errors.InternalServerError(e));
+  }
+};
+
+const viewSearchResults = async (req, res, next) => {
+  const renderVars = {
+    top_page: {
+      title:     'Search',
+      tagline:   'Search through all the items that are on offer',
+      bs_icon:   'search',
+    },
+
+    pagination: {
+      base_url:  `/search?q=${req.query.q}&`,
+      page:      Math.max((req.query.page || 1), 1),
+      page_size: 12,
+    },
+
+    head: {
+      title:            'J4Numbers :: Search',
+      description:      'Home to the wild things',
+      current_page:     'search',
+      current_category: req.query.category || 'all',
+    },
+
+    translators: {
+      anilist: (item) => item.title.romaji,
+      blogs:   (item) => item.long_title,
+      title:   (item) => item.title,
+    },
+
+    search: req.query.q,
+    content: res.locals.searchResults,
+  };
+  res.send(200, renderer.render('pages/search.njk', renderVars));
+  next();
+};
 
 module.exports = (server) => {
-  doSearch(server);
+  server.get(
+    '/search',
+    loadResults, resolveAnimeItems, resolveArtItems, resolveBlogItems,
+    resolveMangaItems, resolveStoryItems, viewSearchResults,
+  );
 };

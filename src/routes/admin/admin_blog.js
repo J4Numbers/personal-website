@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
 const viewBlogHome = require('../../journey/admin/blog/view_all_blogs');
 const createNewBlog = require('../../journey/admin/blog/view_create_new_blog');
@@ -32,12 +32,12 @@ const viewDeleteBlog = require('../../journey/admin/blog/view_delete_one_blog');
 const deleteOneBlog = require('../../journey/admin/blog/delete_one_blog');
 
 module.exports = (server) => {
-  server.get('/admin/blog', testLoggedIn, viewBlogHome);
-  server.get('/admin/blog/new', testLoggedIn, createNewBlog);
-  server.post('/admin/blog/new', testLoggedIn, postNewBlog);
-  server.get('/admin/blog/:blogId', testLoggedIn, viewOneBlog);
-  server.get('/admin/blog/:blogId/edit', testLoggedIn, viewEditDetails);
-  server.post('/admin/blog/:blogId/edit', testLoggedIn, postEditDetails);
-  server.get('/admin/blog/:blogId/delete', testLoggedIn, viewDeleteBlog);
-  server.post('/admin/blog/:blogId/delete', testLoggedIn, deleteOneBlog);
+  server.get('/admin/blog', testAdministratorNotLoggedIn, viewBlogHome);
+  server.get('/admin/blog/new', testAdministratorNotLoggedIn, createNewBlog);
+  server.post('/admin/blog/new', testAdministratorNotLoggedIn, postNewBlog);
+  server.get('/admin/blog/:blogId', testAdministratorNotLoggedIn, viewOneBlog);
+  server.get('/admin/blog/:blogId/edit', testAdministratorNotLoggedIn, viewEditDetails);
+  server.post('/admin/blog/:blogId/edit', testAdministratorNotLoggedIn, postEditDetails);
+  server.get('/admin/blog/:blogId/delete', testAdministratorNotLoggedIn, viewDeleteBlog);
+  server.post('/admin/blog/:blogId/delete', testAdministratorNotLoggedIn, deleteOneBlog);
 };

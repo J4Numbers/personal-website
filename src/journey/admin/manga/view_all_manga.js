@@ -24,18 +24,14 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const MangaHandler = require('../../../lib/MangaHandler');
-const mangaHandlerInstance = MangaHandler.getHandler();
+const mangaHandler = require('../../../js/handlers').fetchMangaHandler();
 
 const viewAllManga = async (req, res, next) => {
   try {
-    const books = await mangaHandlerInstance.findMangaBooks(
-      Math.max(0, ((req.query.page || 1) - 1)) * 10,
-      10,
-      { 'title.romaji': 1 },
-      false,
+    const books = await mangaHandler.lookupMangaStories(
+      req.query.page || 1, 10, '',
     );
-    const bookCount = await mangaHandlerInstance.getTotalBookCount(false);
+    const bookCount = await mangaHandler.getTotalStoryCount('');
 
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');

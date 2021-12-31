@@ -20,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const ProjectHandler = require('../../../lib/ProjectHandler');
-const projectHandlerInstance = ProjectHandler.getHandler();
+const projectHandler = require('../../../js/handlers').fetchProjectHandler();
 
 const deleteSingleProject = async (req, res, next) => {
   try {
-    await projectHandlerInstance.deleteProject(req.params.projectId);
+    await projectHandler.deleteProject(req.params.projectId);
     res.redirect(303, '/admin/projects', next);
   } catch (e) {
     req.log.warn(`Issue found when attempting to delete project :: ${e.message}`);

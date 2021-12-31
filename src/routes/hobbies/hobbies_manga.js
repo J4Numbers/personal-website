@@ -20,10 +20,82 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const getAllManga = require('../../journey/hobbies/manga/get_all_manga');
-const getSingleManga = require('../../journey/hobbies/manga/get_one_manga');
+const { getAllManga, getOneManga } = require('../common');
+
+const renderer = require('../../lib/renderer').nunjucksRenderer();
+
+const prepareMangaList = (req, res, next) => {
+  res.locals.pageMax = 12;
+  next();
+};
+
+const viewAllManga = async (req, res, next) => {
+  let baseUrl = '';
+  if (req.query.category) {
+    baseUrl += `category=${req.query.category}&`;
+  }
+  if (req.query.q) {
+    baseUrl += `q=${req.query.q}&`;
+  }
+  res.contentType = 'text/html';
+  res.header('content-type', 'text/html');
+  res.send(200, renderer.render('pages/manga/manga_all.njk', {
+    top_page: {
+      title:     'My Manga Readlist',
+      tagline:   'A list of all the strange things that I have read at some point or another',
+      image_src: '/assets/images/J_handle.png',
+      image_alt: 'Main face of the site',
+    },
+
+    content: {
+      books: res.locals.manga,
+    },
+
+    pagination: {
+      base_url:  `/hobbies/manga?${baseUrl}`,
+      total:     res.locals.mangaCount,
+      page:      Math.max((req.query.page || 1), 1),
+      page_size: 12,
+    },
+
+    head: {
+      title:            'J4Numbers :: Hobbies :: Manga',
+      description:      'Home to the wild things',
+      current_page:     'hobbies',
+      current_sub_page: 'manga',
+      current_category: req.query.category || 'all',
+    },
+  }));
+  next();
+};
+
+const viewOneManga = async (req, res, next) => {
+  res.contentType = 'text/html';
+  res.header('content-type', 'text/html');
+  res.send(200, renderer.render('pages/manga/manga_one.njk', {
+    top_page: {
+      title:     res.locals.manga.title.romaji,
+      tagline:   'A list of all the strange things that I have read at some point or another',
+      image_src: res.locals.manga.cover_img.large,
+      image_alt: res.locals.manga.title.romaji,
+    },
+
+    content: {
+      book:     res.locals.manga,
+      comments: res.locals.manga.review,
+    },
+
+    head: {
+      title:            'J4Numbers :: Hobbies :: Manga :: ',
+      description:      'Home to the wild things',
+      current_page:     'hobbies',
+      current_sub_page: 'manga',
+    },
+  }));
+  next();
+};
 
 module.exports = (server) => {
-  server.get('/hobbies/manga', getAllManga);
-  server.get('/hobbies/manga/:mangaId', getSingleManga);
+  server.get('/hobbies/manga', prepareMangaList, getAllManga, viewAllManga);
+  server.get('/hobbies/manga/:mangaId', getOneManga, viewOneManga);
 };

@@ -20,10 +20,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const viewFriendLogin = require('../../../journey/misc/friend_login_view');
-const submitFriendLogin = require('../../../journey/misc/friend_login_compare');
+const config = require('config');
+
+const { testFriendLoggedIn } = require('./common');
+const friendlyAuthHandler = require('../../../js/auth').fetchFriendAuthHandler();
+const tokenHandler = require('../../../js/handlers').fetchTokenHandler();
+const renderer = require('../../../lib/renderer').nunjucksRenderer();
+
+const showFriendLogin = async (req, res, next) => {
+  res.send(200, renderer.render('pages/me/me_login.njk', {
+    top_page: {
+      title:     'Test Your Knowledge',
+      tagline:   'Log into the site as someone who knows me',
+      bs_icon:   'key-fill',
+    },
+
+    head: {
+      title:        'J4Numbers',
+      description:  'Home to the wild things',
+      current_page: 'me_login',
+    },
+
+    content: {
+      question: config.get('protected.question'),
+      hint:     config.get('protected.hint'),
+    },
+  }));
+  next();
+};
+
+const attemptFriendLogin = async (req, res, next) => {
+  if (req.body.me_password) {
+    const ident = friendlyAuthHandler.attemptAuthentication({ password: req.body.me_password });
+    if (ident.success) {
+      res.header(
+        'Set-Cookie',
+        `login-token=${await tokenHandler.generateSignature({ friendly: true })}; `
+        + 'Max-Age=3600; '
+        + `Domain=${config.get('app.hostname')}; `
+        + 'Secure; '
+        + 'HttpOnly; '
+        + 'SameSite=Strict',
+      );
+    }
+  }
+  res.redirect(303, '/hobbies/me/login', next);
+};
 
 module.exports = (server) => {
-  server.get('/hobbies/me/login', viewFriendLogin);
-  server.post('/hobbies/me/login', submitFriendLogin);
+  server.get('/hobbies/me/login', testFriendLoggedIn, showFriendLogin);
+  server.post('/hobbies/me/login', testFriendLoggedIn, attemptFriendLogin);
 };

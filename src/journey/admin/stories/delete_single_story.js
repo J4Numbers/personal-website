@@ -20,12 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const StoryHandler = require('../../../lib/StoryHandler');
-const storyHandlerInstance = StoryHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 const deleteSingleStory = async (req, res, next) => {
   try {
-    await storyHandlerInstance.deleteStory(req.params.storyId);
+    await writingHandler.deleteStory(req.params.storyId);
     res.redirect(303, '/admin/stories/', next);
   } catch (e) {
     req.log.warn(`Issue found when attempting to delete story :: ${e.message}`);

@@ -20,11 +20,81 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const getAllBlogs = require('../journey/base/blog/get_all_blogs');
-const getOneBlog = require('../journey/base/blog/get_one_blog');
+const errors = require('restify-errors');
+const renderer = require('../lib/renderer').nunjucksRenderer();
+
+const { getAllBlogs, getOneBlog } = require('./common');
+
+const prepareBlogPage = (req, res, next) => {
+  res.locals.pageMax = 12;
+  res.locals.visible = true;
+  next();
+};
+
+const viewAllBlogs = async (req, res, next) => {
+  res.contentType = 'text/html';
+  res.header('content-type', 'text/html');
+  res.send(200, renderer.render('pages/blog_all.njk', {
+    ...res.nunjucks,
+    top_page: {
+      title:     'My Blog',
+      tagline:   'A list of scribbled things that have been made over the years.',
+      image_src: '/assets/images/J_handle.png',
+      image_alt: 'Main face of the site',
+    },
+
+    content: {
+      blogs: res.locals.blogs,
+    },
+
+    pagination: {
+      base_url:  '/blog?',
+      total:     res.locals.blogCount,
+      page:      Math.max((req.query.page || 1), 1),
+      page_size: 10,
+    },
+
+    head: {
+      title:        'J4Numbers :: Blog',
+      description:  'Home to the wild things',
+      current_page: 'blog',
+    },
+  }));
+  next();
+};
+
+const viewOneBlog = async (req, res, next) => {
+  if (res.locals.blog !== null) {
+    res.contentType = 'text/html';
+    res.header('content-type', 'text/html');
+    res.send(200, renderer.render('pages/blog_single.njk', {
+      ...res.nunjucks,
+
+      top_page: {
+        title:     res.locals.blog.long_title,
+        blog_tags: res.locals.blog.tags,
+        image_src: '/assets/images/J_handle.png',
+        image_alt: 'Main face of the site',
+      },
+
+      content: {
+        blog_text: res.locals.blog.full_text,
+      },
+
+      head: {
+        title:        `J4Numbers :: ${res.locals.blog.long_title}`,
+        description:  'Home to the wild things',
+        current_page: 'blog',
+      },
+    }));
+    next();
+  } else {
+    next(new errors.NotFoundError());
+  }
+};
 
 module.exports = (server) => {
-  server.get('/blog', getAllBlogs);
-  server.get('/blog/:blogId', getOneBlog);
+  server.get('/blog', prepareBlogPage, getAllBlogs, viewAllBlogs);
+  server.get('/blog/:blogId', getOneBlog, viewOneBlog);
   return server;
 };

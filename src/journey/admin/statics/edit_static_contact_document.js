@@ -20,15 +20,17 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const StaticHandler = require('../../../lib/StaticHandler');
-const staticHandlerInstance = StaticHandler.getHandler();
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
 
 const { cullContactListItems } = require('../../../journey/admin/statics/misc');
 
 const editContactListDocument = async (req, res, next) => {
   try {
     const minimisedItems = await cullContactListItems(req.body[ 'sitemap-page' ] || []);
-    await staticHandlerInstance.updateStatic(res.locals.staticId, minimisedItems);
+    await staticHandler.submitStatic({
+      _id: res.locals.staticId,
+      content: minimisedItems,
+    });
     res.redirect(303, `/admin/statics/${res.locals.staticId}`, next);
   } catch (e) {
     req.log.warn(`Issue updating contact list document :: ${e.message}`);

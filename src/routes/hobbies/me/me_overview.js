@@ -20,12 +20,54 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testFriendLoggedIn = require('../../../journey/misc/test_friend_logged_in');
+const errors = require('restify-errors');
+const markdown = require('markdown-it')();
 
-const homepageRadar = require('../../../journey/hobbies/me/homepage_redirect');
-const viewOverviewPage = require('../../../journey/hobbies/me/generate_overview');
+const { testFriendNotLoggedIn } = require('./common');
+
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
+const staticTypes = require('../../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
+const renderer = require('../../../lib/renderer').nunjucksRenderer();
+
+const homepageRedirect = async (req, res, next) => {
+  res.redirect(303, '/hobbies/me/overview', next);
+};
+
+const viewMeOverview = async (req, res, next) => {
+  try {
+    const staticContent = await staticHandler.getStaticById(staticTypes.KNOWING_ME);
+    res.contentType = 'text/html';
+    res.header('content-type', 'text/html');
+    res.send(200, renderer.render('pages/me/me_index.njk', {
+      top_page: {
+        title:     'Welcome to Me',
+        tagline:   'If you were looking for a more personal overview about yours truly, '
+          + 'you\'ve come to the right place!',
+        image_src: '/assets/images/J_handle.png',
+        image_alt: 'My logo that I use to represent myself',
+      },
+
+      content: {
+        title: 'Welcome to Me',
+        text:  markdown.render((staticContent || {}).content || ''),
+      },
+
+      head: {
+        title:                'J4Numbers :: Welcome to Me',
+        description:          'Home to the wild things',
+        current_page:         'hobbies',
+        current_sub_page:     'me',
+        current_sub_sub_page: 'overview',
+      },
+    }));
+    next();
+  } catch (e) {
+    req.log.warn(`Issue found when trying to generate warning of me :: ${e.message}`);
+    next(new errors.InternalServerError(e.message));
+  }
+};
 
 module.exports = (server) => {
-  server.get('/hobbies/me/', testFriendLoggedIn, homepageRadar);
-  server.get('/hobbies/me/overview', testFriendLoggedIn, viewOverviewPage);
+  server.get('/hobbies/me/', testFriendNotLoggedIn, homepageRedirect);
+  server.get('/hobbies/me/overview', testFriendNotLoggedIn, viewMeOverview);
 };

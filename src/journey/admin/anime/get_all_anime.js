@@ -23,17 +23,14 @@
 const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
-const animeHandlerInstance = require('../../../lib/AnimeHandler').getHandler();
+const animeHandler = require('../../../js/handlers').fetchAnimeHandler();
 
 const getAllAnime = async (req, res, next) => {
   try {
-    const shows = await animeHandlerInstance.findAnimeShows(
-      Math.max(0, ((req.query.page || 1) - 1)) * 10,
-      10,
-      { 'title.romaji': 1 },
-      false,
+    const shows = await animeHandler.lookupAnimeShows(
+      req.query.page || 1, 10, '',
     );
-    const showCount = await animeHandlerInstance.getTotalShowCount(false);
+    const showCount = await animeHandler.getTotalShowCount('');
 
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
