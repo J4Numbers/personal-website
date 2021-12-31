@@ -2,13 +2,12 @@ name: NodeJS build and test
 
 on: push
 
+env:
+  default_node_version: 14.x
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x, 16.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -16,7 +15,7 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ env.default_node_version }}
 
     - name: Build
       run: |
@@ -50,10 +49,6 @@ jobs:
     needs: build
     continue-on-error: true
 
-    strategy:
-      matrix:
-        node-version: [12.x, 14.x, 16.x]
-
     steps:
     - uses: actions/checkout@v2
 
@@ -75,7 +70,7 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ env.default_node_version }}
 
     - name: Perform lint checks
       run: |
@@ -119,3 +114,15 @@ jobs:
         npm i
         npm run generate-certs
         npm run test:unit
+
+  deploy:
+    if: github.ref_name == 'main'
+    needs:
+    - test
+    uses: j4numbers/common-workflows/.github/workflows/build-ecr-aws.yml@main
+    with:
+      env: production
+      repo_name: j4numbers/personal-website
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
