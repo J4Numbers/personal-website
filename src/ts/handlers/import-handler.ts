@@ -80,7 +80,7 @@ export default class ImportHandler {
     let promiseList: Array<Promise<void>> = [];
     while (mediaItems.length > 0) {
       logger.info(`Scraped ${mediaItems.length} shows from AniList`);
-      promiseList = promiseList.concat(mediaItems.map(this.resolveIndividualAnime));
+      promiseList = promiseList.concat(mediaItems.map((media) => this.resolveIndividualAnime(media)));
       ++page;
       roller = await this.aniListDataScraper.getPageOfAniListAnimeResults(page);
       mediaItems = roller.data.data.Page.mediaList;
@@ -95,7 +95,7 @@ export default class ImportHandler {
     let promiseList: Array<Promise<void>> = [];
     while (mediaItems.length > 0) {
       logger.info(`Scraped ${mediaItems.length} books from AniList`);
-      promiseList = promiseList.concat(mediaItems.map(this.resolveIndividualManga));
+      promiseList = promiseList.concat(mediaItems.map((media) => this.resolveIndividualManga(media)));
       ++page;
       roller = await this.aniListDataScraper.getPageOfAniListMangaResults(page);
       mediaItems = roller.data.data.Page.mediaList;
