@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
-const statics = require('../../../lib/StaticDocumentTypes');
+const staticTypes = require('../../../js/objects/StaticDocumentTypes').StaticDocumentTypes;
 
 const viewAllStatics = async (req, res, next) => {
   res.contentType = 'text/html';
@@ -34,7 +34,7 @@ const viewAllStatics = async (req, res, next) => {
     },
 
     content: {
-      statics: Object.values(statics).sort(),
+      statics: Object.values(staticTypes).sort(),
     },
 
     head: {

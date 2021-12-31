@@ -20,12 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const StaticHandler = require('../../../lib/StaticHandler');
-const staticHandlerInstance = StaticHandler.getHandler();
+const staticHandler = require('../../../js/handlers').fetchStaticHandler();
 
 const editTextDocument = async (req, res, next) => {
   try {
-    await staticHandlerInstance.updateStatic(res.locals.staticId, req.body[ 'document-text' ]);
+    await staticHandler.submitStatic({
+      _id: res.locals.staticId,
+      content: req.body[ 'document-text' ],
+    });
     res.redirect(303, `/admin/statics/${res.locals.staticId}`, next);
   } catch (e) {
     req.log

@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testLoggedIn = require('../../journey/misc/test_admin_logged_in');
+const { testAdministratorNotLoggedIn } = require('./common');
 
 const viewAllStories = require('../../journey/admin/stories/view_all_stories');
 const viewCreateNewStory = require('../../journey/admin/stories/view_create_new_story');
@@ -32,12 +32,12 @@ const viewDeleteSingleStory = require('../../journey/admin/stories/view_delete_s
 const deleteSingleStory = require('../../journey/admin/stories/delete_single_story');
 
 module.exports = (server) => {
-  server.get('/admin/stories', testLoggedIn, viewAllStories);
-  server.get('/admin/stories/new', testLoggedIn, viewCreateNewStory);
-  server.post('/admin/stories/new', testLoggedIn, createNewStory);
-  server.get('/admin/stories/:storyId', testLoggedIn, viewSingleStory);
-  server.get('/admin/stories/:storyId/edit', testLoggedIn, viewEditSingleStory);
-  server.post('/admin/stories/:storyId/edit', testLoggedIn, editSingleStory);
-  server.get('/admin/stories/:storyId/delete', testLoggedIn, viewDeleteSingleStory);
-  server.post('/admin/stories/:storyId/delete', testLoggedIn, deleteSingleStory);
+  server.get('/admin/stories', testAdministratorNotLoggedIn, viewAllStories);
+  server.get('/admin/stories/new', testAdministratorNotLoggedIn, viewCreateNewStory);
+  server.post('/admin/stories/new', testAdministratorNotLoggedIn, createNewStory);
+  server.get('/admin/stories/:storyId', testAdministratorNotLoggedIn, viewSingleStory);
+  server.get('/admin/stories/:storyId/edit', testAdministratorNotLoggedIn, viewEditSingleStory);
+  server.post('/admin/stories/:storyId/edit', testAdministratorNotLoggedIn, editSingleStory);
+  server.get('/admin/stories/:storyId/delete', testAdministratorNotLoggedIn, viewDeleteSingleStory);
+  server.post('/admin/stories/:storyId/delete', testAdministratorNotLoggedIn, deleteSingleStory);
 };

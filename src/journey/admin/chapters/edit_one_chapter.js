@@ -20,18 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const ChapterHandler = require('../../../lib/ChapterHandler');
-const chapterHandlerInstance = ChapterHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 // All endpoints below are prefixed with `/admin/stories/:storyId/chapter`
 
 const editSingleChapter = async (req, res, next) => {
   try {
-    await chapterHandlerInstance.updateExistingChapter(
-      req.body[ 'chapter-id' ], req.body[ 'chapter-number' ],
-      req.body[ 'chapter-title' ], req.body[ 'chapter-text' ],
-      req.body[ 'chapter-comments' ],
-    );
+    await writingHandler.submitChapter({
+      _id: req.body[ 'chapter-id' ],
+      parent_story_id: req.params.storyId,
+      chapter_number: req.body[ 'chapter-number' ],
+      chapter_title: req.body[ 'chapter-title' ],
+      chapter_text: req.body[ 'chapter-text' ],
+      author_notes: req.body[ 'chapter-comments' ],
+    });
     res.redirect(
       303,
       `/admin/stories/${req.params.storyId}/chapter/${req.params.chapterNumber}`,

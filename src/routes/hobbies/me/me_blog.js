@@ -20,12 +20,91 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const testFriendLoggedIn = require('../../../journey/misc/test_friend_logged_in');
+const errors = require('restify-errors');
+const markdown = require('markdown-it')();
 
-const getAllBlogPosts = require('../../../journey/hobbies/me/get_all_extended_blog');
-const getSingleBlogPost = require('../../../journey/hobbies/me/get_single_extended_blog');
+const renderer = require('../../../lib/renderer').nunjucksRenderer();
+
+const { testFriendNotLoggedIn } = require('./common');
+const { getAllBlogs, getOneBlog } = require('../../common');
+
+const prepareBlogSearch = async (req, res, next) => {
+  res.locals.pageMax = 12;
+  res.locals.visible = false;
+  next();
+};
+
+const viewAllExtendedBlogs = async (req, res, next) => {
+  res.contentType = 'text/html';
+  res.header('content-type', 'text/html');
+  res.send(200, renderer.render('pages/me/me_blog_all.njk', {
+    top_page: {
+      title:     'My Private Blog',
+      tagline:   'A list of scribbled things that have been made over the years.',
+      image_src: '/assets/images/J_handle.png',
+      image_alt: 'Main face of the site',
+    },
+
+    content: {
+      blogs: res.locals.blogs,
+    },
+
+    pagination: {
+      base_url:  '/hobbies/me/extended-blog?',
+      total:     res.locals.blogCount,
+      page:      Math.max((req.query.page || 1), 1),
+      page_size: 10,
+    },
+
+    head: {
+      title:                'J4Numbers :: Extended Blog',
+      description:          'Home to the wild things',
+      current_page:         'hobbies',
+      current_sub_page:     'me',
+      current_sub_sub_page: 'extended-blog',
+    },
+  }));
+  next();
+};
+
+
+const viewSingleBlogPost = async (req, res, next) => {
+  if (res.locals.blog !== null) {
+    res.contentType = 'text/html';
+    res.header('content-type', 'text/html');
+    res.send(200, renderer.render('pages/me/me_blog_single.njk', {
+      top_page: {
+        title:     res.locals.blog.long_title,
+        blog_tags: res.locals.blog.tags,
+        image_src: '/assets/images/J_handle.png',
+        image_alt: 'Main face of the site',
+      },
+
+      content: {
+        blog_text: markdown.render(res.locals.blog.full_text),
+      },
+
+      head: {
+        title:                `J4Numbers :: ${res.locals.blog.long_title}`,
+        description:          'Home to the wild things',
+        current_page:         'hobbies',
+        current_sub_page:     'me',
+        current_sub_sub_page: 'extended-blog',
+      },
+    }));
+    next();
+  } else {
+    next(new errors.NotFoundError('Blog post not found'));
+  }
+};
 
 module.exports = (server) => {
-  server.get('/hobbies/me/extended-blog', testFriendLoggedIn, getAllBlogPosts);
-  server.get('/hobbies/me/extended-blog/:blogId', testFriendLoggedIn, getSingleBlogPost);
+  server.get(
+    '/hobbies/me/extended-blog', testFriendNotLoggedIn, prepareBlogSearch,
+    getAllBlogs, viewAllExtendedBlogs,
+  );
+  server.get(
+    '/hobbies/me/extended-blog/:blogId', testFriendNotLoggedIn,
+    getOneBlog, viewSingleBlogPost,
+  );
 };

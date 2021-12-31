@@ -24,15 +24,15 @@ const errors = require('restify-errors');
 
 const renderer = require('../../../lib/renderer').nunjucksRenderer();
 
-const StoryHandler = require('../../../lib/StoryHandler');
-const storyHandlerInstance = StoryHandler.getHandler();
+const writingHandler = require('../../../js/handlers').fetchWritingHandler();
 
 // All endpoints below are prefixed with `/admin/stories/:storyId/chapter`
 
 const viewCreateNewChapter = async (req, res, next) => {
   try {
     req.log.info(`Searching for story with id ${req.params.storyId}`);
-    const story = await storyHandlerInstance.findStoryByRawId(req.params.storyId);
+    const story = await writingHandler.getStoryById(req.params.storyId);
+
     res.contentType = 'text/html';
     res.header('content-type', 'text/html');
     res.send(200, renderer.render('pages/admin/stories/admin_chapter_create.njk', {

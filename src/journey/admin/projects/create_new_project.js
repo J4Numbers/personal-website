@@ -20,16 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const ProjectHandler = require('../../../lib/ProjectHandler');
-const projectHandlerInstance = ProjectHandler.getHandler();
+const projectHandler = require('../../../js/handlers').fetchProjectHandler();
 
 const postNewProject = async (req, res, next) => {
   try {
-    const savedProject = await projectHandlerInstance.insertProject(
-      req.body[ 'project-title' ], req.body[ 'project-text' ],
-      req.body[ 'project-visible' ] === 'Y',
-      req.body[ 'project-tags' ].split(/, */u).map((tag) => tag.trim()).filter((tag) => tag !== ''),
-    );
+    const savedProject = await projectHandler.submitProject({
+      long_title: req.body[ 'project-title' ],
+      short_title: req.body[ 'project-title' ]
+        .replace(/ /gu, '-')
+        .replace(/\p{Z}/gu, '')
+        .toLocaleLowerCase(),
+      description: req.body[ 'project-text' ],
+      public: req.body[ 'project-visible' ] === 'Y',
+      tags: req.body[ 'project-tags' ]
+        .split(/, */u)
+        .map((tag) => tag.trim())
+        .filter((tag) => tag !== ''),
+    });
     res.redirect(303, `/admin/projects/${savedProject._id}`, next);
   } catch (e) {
     req.log.warn(`Issue found when trying to create new project :: ${e.message}`);

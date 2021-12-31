@@ -16,7 +16,7 @@
             <select id="story-status" name="story-status" class="form-control">
                 <option value="NOT_CHOSEN">Please choose a story status</option>
                 <option {{ "selected=\"selected\"" if content.story.story_status == "IN_PROGRESS" }} value="IN_PROGRESS">In progress</option>
-                <option {{ "selected=\"selected\"" if content.story.story_status == "ON_HOLD" }} value="ON HOLD">On hold</option>
+                <option {{ "selected=\"selected\"" if content.story.story_status == "ON_HOLD" }} value="ON_HOLD">On hold</option>
                 <option {{ "selected=\"selected\"" if content.story.story_status == "COMPLETED" }} value="COMPLETED">Completed</option>
                 <option {{ "selected=\"selected\"" if content.story.story_status == "DROPPED" }} value="DROPPED">Dropped</option>
             </select>

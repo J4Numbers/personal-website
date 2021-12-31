@@ -33,8 +33,7 @@ const cullListItems = (items) => Promise
 const cullContactListItems = (items) => Promise
   .resolve(items.filter((toValidate) => toValidate.contact_method !== ''
     && toValidate.contact_link !== ''
-    && toValidate.fa_style !== ''
-    && toValidate.fa_icon !== ''));
+    && toValidate.bs_icon !== ''));
 
 module.exports = {
   cullListItems,

@@ -20,8 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-const homepageJourney = require('../journey/base/homepage');
+const renderer = require('../lib/renderer/').nunjucksRenderer();
+
+const viewHomepage = async (req, res, next) => {
+  res.contentType = 'text/html';
+  res.header('content-type', 'text/html');
+  res.send(200, renderer.render('pages/index.njk', {
+    ...res.nunjucks,
+    top_page: {
+      title:     'Hello World',
+      tagline:   'This is a site that contains information about the person on your left.',
+      image_src: '/assets/images/J_handle.png',
+      image_alt: 'Main face of the site',
+    },
+
+    head: {
+      title:        'J4Numbers',
+      description:  'Home to the wild things',
+      current_page: 'index',
+    },
+  }));
+  next();
+};
 
 module.exports = (server) => {
-  server.get('/', homepageJourney);
+  server.get('/', viewHomepage);
 };
