@@ -5,6 +5,7 @@ module.exports = {
   ],
   globals: [
     '__coverage__',
+    'Generator',
   ],
   spec: 'test/spec/app/**/*.js',
   timeout: 10000,
