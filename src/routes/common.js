@@ -56,7 +56,8 @@ const getOneArt = async (req, res, next) => {
 const getAllBlogs = async (req, res, next) => {
   try {
     res.locals.blogs = await blogHandler.listBlogPosts(
-      req.query.page || 1, res.locals.pageMax || 10, res.locals.visible || true,
+      req.query.page || 1, res.locals.pageMax || 10,
+      res.locals.visible === undefined || res.locals.visible,
     );
     res.locals.blogCount = await blogHandler.getTotalBlogCount(true);
     next();
