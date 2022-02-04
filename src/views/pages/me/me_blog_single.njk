@@ -11,6 +11,10 @@
             <span class="btn btn-light">{{ tag }}</span>
         {% endfor %}
     </p>
+    <p>Posted: {{ content.time_posted | date }}</p>
+    {% if content.time_posted != content.time_updated %}
+        <p>Last edited: {{ content.time_updated | date }}</p>
+    {% endif %}
 {% endblock %}
 
 {% block me_content %}

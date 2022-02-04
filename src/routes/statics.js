@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 const envs = process.env;
-const moment = require('moment');
+const luxon = require('luxon');
 const errors = require('restify-errors');
 
 const staticHandler = require('../js/handlers').fetchStaticHandler();
@@ -146,7 +146,7 @@ const getStatistics = async (req, res, next) => {
     },
 
     content: {
-      time:    moment(),
+      time:    luxon.DateTime.now(),
       version: envs.NPM_PACKAGE_VERSION,
     },
 

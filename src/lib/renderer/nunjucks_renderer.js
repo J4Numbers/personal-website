@@ -22,14 +22,19 @@
 
 const path = require('path');
 const nunjucks = require('nunjucks');
-const nunjucksDate = require('nunjucks-date');
 const markdown = require('markdown-it')();
 const config = require('config');
 const metadata = require('../../../package');
+const { DateTime } = require('luxon');
 
 let renderer;
 
 const renderMarkdown = (input) => markdown.render(input || '');
+
+const formatDate = (date) => DateTime.fromJSDate(date).toLocaleString({
+  locale: 'en_gb',
+  ...DateTime.DATETIME_MED_WITH_SECONDS,
+});
 
 const createRenderer = () => {
   const nunjucksEnv = new nunjucks.Environment([
@@ -41,7 +46,7 @@ const createRenderer = () => {
   nunjucksEnv.addGlobal('functionality', config.get('functionality'));
   nunjucksEnv.addGlobal('metadata', metadata);
 
-  nunjucksEnv.addFilter('date', nunjucksDate);
+  nunjucksEnv.addFilter('date', formatDate);
   nunjucksEnv.addFilter('markdown', renderMarkdown);
 
   return nunjucksEnv;

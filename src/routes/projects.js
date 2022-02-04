@@ -77,6 +77,8 @@ const viewOneProject = async (req, res, next) => {
 
       content: {
         project_text: res.locals.project.description,
+        time_updated: res.locals.project.time_updated,
+        time_posted: res.locals.project.time_posted,
       },
 
       head: {

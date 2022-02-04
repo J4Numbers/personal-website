@@ -79,6 +79,8 @@ const viewOneBlog = async (req, res, next) => {
 
       content: {
         blog_text: res.locals.blog.full_text,
+        time_updated: res.locals.blog.time_updated,
+        time_posted: res.locals.blog.time_posted,
       },
 
       head: {
