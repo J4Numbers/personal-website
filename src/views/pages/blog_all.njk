@@ -13,8 +13,8 @@
                     <h2 class="blog-title"><a href="/blog/{{ blog._id }}" >{{ blog.long_title }}</a></h2>
                 </div>
                 <div class="col-lg-6">
-                    <p>Posted: {{ blog.time_posted | date("Do MMMM YYYY") }}</p>
-                    <p>Updated: {{ blog.time_updated | date("Do MMMM YYYY") }}</p>
+                    <p>Posted: {{ blog.time_posted | date("d MMMM yyyy") }}</p>
+                    <p>Updated: {{ blog.time_updated | date("d MMMM yyyy") }}</p>
                 </div>
                 <div class="col-lg-6">
                     <p class="text-right">

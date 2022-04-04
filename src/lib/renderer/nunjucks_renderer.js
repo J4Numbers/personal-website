@@ -31,10 +31,16 @@ let renderer;
 
 const renderMarkdown = (input) => markdown.render(input || '');
 
-const formatDate = (date) => DateTime.fromJSDate(date).toLocaleString({
-  locale: 'en_gb',
-  ...DateTime.DATETIME_MED_WITH_SECONDS,
-});
+const formatDate = (date, fmtString = 'dd/MM/yyyy') => {
+  let inputDate;
+  if (typeof date === 'number') {
+    inputDate = DateTime.fromMillis(date);
+  } else {
+    inputDate = DateTime.fromJSDate(date);
+  }
+  return inputDate
+    .toFormat(fmtString);
+};
 
 const createRenderer = () => {
   const nunjucksEnv = new nunjucks.Environment([

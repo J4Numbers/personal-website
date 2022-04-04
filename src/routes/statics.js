@@ -146,7 +146,7 @@ const getStatistics = async (req, res, next) => {
     },
 
     content: {
-      time:    luxon.DateTime.now(),
+      time:    Date.now(),
       version: envs.NPM_PACKAGE_VERSION,
     },
 
