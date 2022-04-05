@@ -46,7 +46,7 @@ resource "aws_ecs_service" "personal_website_image" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.central_lb_targets.arn
-    container_name   = var.application_name
+    container_name   = "${var.application_name}-service"
     container_port   = var.application_port
   }
 }
