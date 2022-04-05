@@ -4,6 +4,9 @@ on:
       env:
         required: true
         type: string
+      config_file:
+        required: true
+        type: string
       deploy_version:
         required: true
         type: string
@@ -51,7 +54,7 @@ jobs:
         TF_VAR_logger_level: "info"
       run: |
         cd tf/site/
-        terraform init -backend-config backend_config/dev.conf
+        terraform init -backend-config ${{ inputs.config_file }}
         terraform validate
         terraform plan -no-color -out plan.tfplan
 

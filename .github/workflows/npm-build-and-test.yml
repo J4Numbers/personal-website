@@ -135,6 +135,7 @@ jobs:
     with:
       env: production
       deploy_version: ${{ github.sha }}
+      config_file: backend-conf/dev.conf
     secrets:
       AWS_ACCESS_KEY_ID: ${{ secrets.aws_access_key_id }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
