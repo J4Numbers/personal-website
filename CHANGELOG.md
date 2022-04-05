@@ -1,5 +1,11 @@
 # Changelog
 
+#### 2.0.2 (2022-04-05)
+
+##### Build System / Dependencies
+
+* **tf:**  allow patch version updates ([3b8960c3](https://github.com/j4numbers/personal-website/commit/3b8960c34340058252e53acb45bd9c389f8cbc2d))
+
 #### 2.0.1 (2022-04-05)
 
 ##### Build System / Dependencies
