@@ -1,5 +1,11 @@
 # Changelog
 
+#### 2.0.3 (2022-04-05)
+
+##### Build System / Dependencies
+
+* **tf:**  fix invalid terraform ([5396dbbf](https://github.com/j4numbers/personal-website/commit/5396dbbf02ed5a7b83de704c08cc293680311df1))
+
 #### 2.0.2 (2022-04-05)
 
 ##### Build System / Dependencies
