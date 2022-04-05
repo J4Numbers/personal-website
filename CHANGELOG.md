@@ -1,5 +1,11 @@
 # Changelog
 
+#### 2.0.4 (2022-04-05)
+
+##### Continuous Integration
+
+* **conf:**  fix config file location ([f202d472](https://github.com/j4numbers/personal-website/commit/f202d472b8e7f548968b6de7ba0d192f2145e360))
+
 #### 2.0.3 (2022-04-05)
 
 ##### Build System / Dependencies
