@@ -15,10 +15,10 @@ variable "deploy_version" {
 
 variable "dns_hosted_zones" {
   description = "A collection of all the hosted zones the application can be deployed on"
-  type        = "map"
+  type        = map(string)
 }
 
 variable "subnet" {
   description = "The subnet collection that the applications will be deployed into"
-  type        = "map"
+  type        = map(string)
 }

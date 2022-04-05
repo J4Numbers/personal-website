@@ -8,11 +8,11 @@ resource "aws_acm_certificate" "central_lb_cert" {
 }
 
 resource "aws_lb" "central_load_balancer" {
-  name               = "${local.dev-env}-${var.application_name}-central-alb"
+  name               = "${local.dev-env}-${var.application_name}-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.personal_website_sg.id]
-  subnets            = [data.aws_subnet_ids.root_vpc_subnets.ids]
+  subnets            = data.aws_subnets.root_vpc_subnets.ids
 
   enable_deletion_protection = false
   enable_http2               = true
@@ -22,7 +22,7 @@ resource "aws_lb_target_group" "central_lb_targets" {
   name                 = "${local.dev-env}-${var.application_name}"
   port                 = var.application_port
   protocol             = "TCP"
-  vpc_id               = data.aws_subnet.personal_website_subnet[0].vpc_id
+  vpc_id               = data.aws_vpc.root_vpc.id
   deregistration_delay = 60
 
   health_check {

@@ -7,7 +7,9 @@
 src/js/
 
 ### Terraform
-tf/site/.terraform
+tf/**/.terraform
+tf/**/*.lock.hcl
+tf/**/*.tfplan
 
 ### Generated
 
