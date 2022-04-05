@@ -3,5 +3,5 @@ subnet = {
 }
 
 dns_hosted_zones = {
-  "dev" = "j4numbers.co.uk."
+  "dev" = "j4numbers.co.uk"
 }

@@ -30,7 +30,7 @@ data "aws_ami" "base_ami" {
   most_recent = true
 
   filter {
-    name   = "AMI name"
+    name   = "name"
     values = ["amzn2-ami-ecs*"]
   }
 }
@@ -45,16 +45,17 @@ data "template_file" "user_data" {
 }
 
 data "aws_vpc" "root_vpc" {
-  count = 1
-
   filter {
     name   = "tag:Name"
     values = ["dev-vpc"]
   }
 }
 
-data "aws_subnet_ids" "root_vpc_subnets" {
-  vpc_id = data.aws_vpc.root_vpc.id
+data "aws_subnets" "root_vpc_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.root_vpc.id]
+  }
 }
 
 data "aws_route53_zone" "hosted_zone" {

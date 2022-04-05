@@ -10,7 +10,7 @@ resource "aws_launch_configuration" "website_asg_lc" {
 
 resource "aws_autoscaling_group" "website_asg" {
   name                 = "${var.application_name}-asg"
-  vpc_zone_identifier  = data.aws_subnet_ids.root_vpc_subnets.ids
+  vpc_zone_identifier  = data.aws_subnets.root_vpc_subnets.ids
   launch_configuration = aws_launch_configuration.website_asg_lc.name
 
   desired_capacity = 1
