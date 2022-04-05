@@ -1,5 +1,11 @@
 # Changelog
 
+#### 2.0.1 (2022-04-05)
+
+##### Build System / Dependencies
+
+* **tf:**  add terraform ecs ([4899df14](https://github.com/j4numbers/personal-website/commit/4899df149454fc198a0633a96cdaf0eb533e8970))
+
 #### 2.0.0 (2022-04-04)
 
 ##### Build System / Dependencies
