@@ -45,7 +45,7 @@
     "restify": "^8.6.0",
     "restify-errors": "latest",
     "serve-favicon": "^2.5.0",
-    "sharp": "^0.29.3",
+    "sharp": "^0.30.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
